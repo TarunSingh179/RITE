@@ -1,0 +1,252 @@
+{% extends "base.html" %}
+
+{% block title %}Home - College Management System{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section fade-in-up" style="opacity: 1; transform: translateY(0px); transition: opacity 0.8s, transform 0.8s;">
+    <div class="hero-accent"></div>
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <div class="hero-kicker mb-2">Institute of Excellence</div>
+                <h1 class="display-4 fw-bold mb-3 hero-title">RADHAKRISHNA INSTITUTE OF TECHNOLOGY AND ENGINEERING</h1>
+                <p class="lead mb-4">Empowering students and faculty with a modern, unified platform for academics, administration, and campus life.</p>
+                <div class="d-flex flex-wrap gap-3">
+                    {% if not current_user.is_authenticated %}
+                    <a href="{{ url_for('login') }}" class="btn btn-light btn-lg ripple">
+                        <i class="fas fa-sign-in-alt me-2"></i>Login
+                    </a>
+                    {% endif %}
+                    <a href="{{ url_for('courses') }}" class="btn btn-brand btn-lg ripple">
+                        <i class="fas fa-graduation-cap me-2"></i>Explore Courses
+                    </a>
+                    <a href="{{ url_for('contact') }}" class="btn btn-outline-brand btn-lg ripple">
+                        <i class="fas fa-envelope-open-text me-2"></i>Contact Admissions
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6 text-center">
+                <div class="hero-logo-card">
+                    <picture>
+                        <source type="image/png" srcset="{{ url_for('static', filename='img/rite-logo.png') }}">
+                        <img src="{{ url_for('static', filename='img/rite-logo.svg') }}" alt="RITE Logo" class="hero-logo img-fluid" loading="lazy">
+                    </picture>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats strip under hero -->
+<section class="py-4">
+    <div class="container">
+        <div class="row g-3 text-center text-white">
+            <div class="col-6 col-md-4">
+                <div class="p-3 bg-dark bg-opacity-25 rounded-3">
+                    <div class="h3 mb-0">95%</div>
+                    <small class="text-light">Placement Rate</small>
+                </div>
+            </div>
+            <div class="col-6 col-md-4">
+                <div class="p-3 bg-dark bg-opacity-25 rounded-3">
+                    <div class="h3 mb-0">35+</div>
+                    <small class="text-light">Programs</small>
+                </div>
+            </div>
+            <div class="col-12 col-md-4">
+                <div class="p-3 bg-dark bg-opacity-25 rounded-3">
+                    <div class="h3 mb-0">150+</div>
+                    <small class="text-light">Recruiters</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-5 fade-in-up">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-lg-8 mx-auto">
+                <h2 class="display-5 fw-bold">Why Choose Our College?</h2>
+                <p class="lead text-muted">Discover the features that make our college management system exceptional</p>
+            </div>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4" style="--animation-order: 1;">
+                <div class="card h-100 border-0 text-center p-4 staggered-animation">
+                    <div class="card-body">
+                        <i class="fas fa-users feature-icon"></i>
+                        <h5 class="card-title">Role-Based Access</h5>
+                        <p class="card-text">Different interfaces for administrators, faculty, and students with appropriate permissions.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4" style="--animation-order: 2;">
+                <div class="card h-100 border-0 text-center p-4 staggered-animation">
+                    <div class="card-body">
+                        <i class="fas fa-book feature-icon"></i>
+                        <h5 class="card-title">Digital Library</h5>
+                        <p class="card-text">Comprehensive library management system with book issuing and tracking capabilities.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4" style="--animation-order: 3;">
+                <div class="card h-100 border-0 text-center p-4 staggered-animation">
+                    <div class="card-body">
+                        <i class="fas fa-calendar-alt feature-icon"></i>
+                        <h5 class="card-title">Event Management</h5>
+                        <p class="card-text">Stay updated with college events, academic calendar, and important announcements.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4" style="--animation-order: 4;">
+                <div class="card h-100 border-0 text-center p-4 staggered-animation">
+                    <div class="card-body">
+                        <i class="fas fa-tasks feature-icon"></i>
+                        <h5 class="card-title">Assignment Management</h5>
+                        <p class="card-text">Faculty can create assignments and students can submit them digitally with file uploads.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4" style="--animation-order: 5;">
+                <div class="card h-100 border-0 text-center p-4 staggered-animation">
+                    <div class="card-body">
+                        <i class="fas fa-credit-card feature-icon"></i>
+                        <h5 class="card-title">Fee Management</h5>
+                        <p class="card-text">Online fee submission portal with payment tracking and receipt generation.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4" style="--animation-order: 6;">
+                <div class="card h-100 border-0 text-center p-4 staggered-animation">
+                    <div class="card-body">
+                        <i class="fas fa-chart-line feature-icon"></i>
+                        <h5 class="card-title">Performance Tracking</h5>
+                        <p class="card-text">Monitor academic performance with detailed reports and analytics.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Recent Events Section -->
+{% if events %}
+<section class="py-5 bg-light fade-in-up">
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col-lg-8">
+                <h2 class="display-6 fw-bold">Upcoming Events</h2>
+                <p class="text-muted dark-mode-text">Stay connected with the latest events and activities</p>
+            </div>
+            <div class="col-lg-4 text-end">
+                <a href="{{ url_for('events') }}" class="btn btn-primary ripple">View All Events</a>
+            </div>
+        </div>
+        <div class="row g-4">
+            {% for event in events %}
+            <div class="col-md-6 col-lg-4" style="--animation-order: {{ loop.index }};">
+                <div class="card h-100 staggered-animation">
+                    {% if event.image_path %}
+                    <img src="{{ url_for('static', filename=event.image_path) }}" class="card-img-top" loading="lazy" alt="{{ event.title }}">
+                    {% else %}
+                    <div class="card-img-top bg-secondary text-white text-center py-4">
+                        <i class="fas fa-calendar" style="font-size: 3rem;"></i>
+                    </div>
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ event.title }}</h5>
+                        <p class="card-text dark-mode-text">{{ event.description[:100] }}{% if event.description|length > 100 %}...{% endif %}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">
+                                <i class="fas fa-calendar me-1"></i>
+                                {{ event.event_date.strftime('%B %d, %Y') }}
+                            </small>
+                            <span class="badge bg-primary">{{ event.category }}</span>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <small class="text-muted">
+                            <i class="fas fa-map-marker-alt me-1"></i>{{ event.venue }}
+                        </small>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Courses Section -->
+{% if courses %}
+<section class="py-5 fade-in-up">
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col-lg-8">
+                <h2 class="display-6 fw-bold">Our Courses</h2>
+                <p class="text-muted dark-mode-text">Explore our diverse range of academic programs</p>
+            </div>
+            <div class="col-lg-4 text-end">
+                <a href="{{ url_for('courses') }}" class="btn btn-outline-primary ripple">View All Courses</a>
+            </div>
+        </div>
+        <div class="row g-4">
+            {% for course in courses %}
+            <div class="col-md-6 col-lg-4" style="--animation-order: {{ loop.index }};">
+                <div class="card h-100 staggered-animation">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ course.name }}</h5>
+                        <p class="card-text dark-mode-text">{{ course.description }}</p>
+                        <div class="mb-3">
+                            <span class="badge bg-info me-2">{{ course.duration }}</span>
+                            <span class="badge bg-secondary">{{ course.total_semesters }} Semesters</span>
+                        </div>
+                        <p class="card-text"><small class="text-muted">Course Code: {{ course.code }}</small></p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Statistics Section -->
+<section class="py-5 bg-primary text-white fade-in-up">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-3" style="--animation-order: 1;">
+                <div class="mb-3 staggered-animation">
+                    <i class="fas fa-graduation-cap stat-icon" style="font-size: 3rem;"></i>
+                </div>
+                <h3 class="fw-bold">1000+</h3>
+                <p>Students</p>
+            </div>
+            <div class="col-md-3" style="--animation-order: 2;">
+                <div class="mb-3 staggered-animation">
+                    <i class="fas fa-chalkboard-teacher stat-icon" style="font-size: 3rem;"></i>
+                </div>
+                <h3 class="fw-bold">100+</h3>
+                <p>Faculty Members</p>
+            </div>
+            <div class="col-md-3" style="--animation-order: 3;">
+                <div class="mb-3 staggered-animation">
+                    <i class="fas fa-book stat-icon" style="font-size: 3rem;"></i>
+                </div>
+                <h3 class="fw-bold">5000+</h3>
+                <p>Books in Library</p>
+            </div>
+            <div class="col-md-3" style="--animation-order: 4;">
+                <div class="mb-3 staggered-animation">
+                    <i class="fas fa-trophy stat-icon" style="font-size: 3rem;"></i>
+                </div>
+                <h3 class="fw-bold">50+</h3>
+                <p>Awards Won</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %} 

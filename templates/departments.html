@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Departments - RITE{% endblock %}
+
+{% block content %}
+<section class="py-5 fade-in-up">
+  <div class="container">
+    <div class="row text-center mb-5">
+      <div class="col-lg-8 mx-auto">
+        <h1 class="display-5 fw-bold">Departments</h1>
+        <p class="lead text-muted dark-mode-text">Explore the academic departments at RITE</p>
+      </div>
+    </div>
+
+    <div class="row g-4">
+      {% set dept_list = [
+        { 'name': 'Computer Science & Engineering', 'desc': 'Software engineering, AI/ML, systems, and data.' },
+        { 'name': 'Electronics & Communication', 'desc': 'VLSI, embedded systems, and communications.' },
+        { 'name': 'Mechanical Engineering', 'desc': 'Design, manufacturing, and thermal engineering.' },
+        { 'name': 'Civil Engineering', 'desc': 'Structures, geotech, transportation, and environment.' },
+        { 'name': 'Electrical Engineering', 'desc': 'Power systems, machines, and control.' },
+        { 'name': 'Basic Sciences & Humanities', 'desc': 'Foundational courses in math, physics, chemistry, and communication.' }
+      ] %}
+
+      {% for d in dept_list %}
+      <div class="col-md-6 col-lg-4" style="--animation-order: {{ loop.index }};">
+        <div class="card h-100 border-0 shadow-sm staggered-animation">
+          <div class="card-body">
+            <h5 class="card-title">{{ d.name }}</h5>
+            <p class="card-text dark-mode-text">{{ d.desc }}</p>
+            <a href="{{ url_for('courses') }}" class="btn btn-outline-primary btn-sm ripple">View Courses</a>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

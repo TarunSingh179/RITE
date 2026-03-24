@@ -1,0 +1,331 @@
+{% extends "base.html" %}
+
+{% block title %}Contact Us - College Management System{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h2 class="card-title">
+                                <i class="fas fa-envelope me-2"></i>Contact Us
+                            </h2>
+                            <p class="card-text">Get in touch with us for any inquiries, support, or information about our programs.</p>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <i class="fas fa-phone" style="font-size: 4rem; opacity: 0.7;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Contact Information -->
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h5 class="mb-0">Contact Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-4">
+                        <h6><i class="fas fa-map-marker-alt text-primary me-2"></i>Address</h6>
+                        <p class="text-muted">
+                            123 College Street<br>
+                            Academic District<br>
+                            City, State 12345<br>
+                            Country
+                        </p>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h6><i class="fas fa-phone text-primary me-2"></i>Phone</h6>
+                        <p class="text-muted">
+                            <strong>Main Office:</strong> +1 (234) 567-8900<br>
+                            <strong>Admissions:</strong> +1 (234) 567-8901<br>
+                            <strong>Student Support:</strong> +1 (234) 567-8902
+                        </p>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h6><i class="fas fa-envelope text-primary me-2"></i>Email</h6>
+                        <p class="text-muted">
+                            <strong>General:</strong> info@college.com<br>
+                            <strong>Admissions:</strong> admissions@college.com<br>
+                            <strong>Support:</strong> support@college.com
+                        </p>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h6><i class="fas fa-clock text-primary me-2"></i>Office Hours</h6>
+                        <p class="text-muted">
+                            <strong>Monday - Friday:</strong> 8:00 AM - 6:00 PM<br>
+                            <strong>Saturday:</strong> 9:00 AM - 2:00 PM<br>
+                            <strong>Sunday:</strong> Closed
+                        </p>
+                    </div>
+                    
+                    <div>
+                        <h6><i class="fas fa-globe text-primary me-2"></i>Social Media</h6>
+                        <div class="d-flex gap-2">
+                            <a href="#" class="btn btn-outline-primary btn-sm">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                            <a href="#" class="btn btn-outline-info btn-sm">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                            <a href="#" class="btn btn-outline-danger btn-sm">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                            <a href="#" class="btn btn-outline-primary btn-sm">
+                                <i class="fab fa-linkedin-in"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Form -->
+        <div class="col-lg-8 mb-4">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h5 class="mb-0">Send us a Message</h5>
+                </div>
+                <div class="card-body">
+                    <form>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="firstName" class="form-label">First Name *</label>
+                                <input type="text" class="form-control" id="firstName" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="lastName" class="form-label">Last Name *</label>
+                                <input type="text" class="form-control" id="lastName" required>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="email" class="form-label">Email Address *</label>
+                                <input type="email" class="form-control" id="email" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="phone" class="form-label">Phone Number</label>
+                                <input type="tel" class="form-control" id="phone">
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="subject" class="form-label">Subject *</label>
+                            <select class="form-select" id="subject" required>
+                                <option value="">Select a subject</option>
+                                <option value="admissions">Admissions Inquiry</option>
+                                <option value="academic">Academic Information</option>
+                                <option value="technical">Technical Support</option>
+                                <option value="general">General Inquiry</option>
+                                <option value="feedback">Feedback</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="message" class="form-label">Message *</label>
+                            <textarea class="form-control" id="message" rows="5" placeholder="Please describe your inquiry in detail..." required></textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="newsletter">
+                                <label class="form-check-label" for="newsletter">
+                                    Subscribe to our newsletter for updates and announcements
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane me-2"></i>Send Message
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Department Contacts -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h5 class="mb-0">Department Contacts</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <div class="card border-primary">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-graduation-cap text-primary" style="font-size: 2rem;"></i>
+                                    <h6 class="mt-2">Admissions Office</h6>
+                                    <p class="text-muted small mb-2">For admission-related queries</p>
+                                    <p class="mb-1"><strong>Email:</strong> admissions@college.com</p>
+                                    <p class="mb-1"><strong>Phone:</strong> +1 (234) 567-8901</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <div class="card border-success">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-chalkboard-teacher text-success" style="font-size: 2rem;"></i>
+                                    <h6 class="mt-2">Academic Affairs</h6>
+                                    <p class="text-muted small mb-2">For academic-related queries</p>
+                                    <p class="mb-1"><strong>Email:</strong> academic@college.com</p>
+                                    <p class="mb-1"><strong>Phone:</strong> +1 (234) 567-8903</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <div class="card border-warning">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-users text-warning" style="font-size: 2rem;"></i>
+                                    <h6 class="mt-2">Student Services</h6>
+                                    <p class="text-muted small mb-2">For student support queries</p>
+                                    <p class="mb-1"><strong>Email:</strong> students@college.com</p>
+                                    <p class="mb-1"><strong>Phone:</strong> +1 (234) 567-8904</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Map Section -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h5 class="mb-0">Location</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="bg-light text-center py-5">
+                        <i class="fas fa-map-marked-alt text-muted" style="font-size: 4rem;"></i>
+                        <h4 class="text-muted mt-3">Interactive Map</h4>
+                        <p class="text-muted">Map integration would be displayed here</p>
+                        <div class="mt-3">
+                            <a href="#" class="btn btn-primary">
+                                <i class="fas fa-directions me-2"></i>Get Directions
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FAQ Section -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h5 class="mb-0">Frequently Asked Questions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="accordion" id="faqAccordion">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faq1">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1">
+                                    How do I apply for admission?
+                                </button>
+                            </h2>
+                            <div id="collapse1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    You can apply for admission through our online application portal. Visit the admissions section on our website and follow the step-by-step process. Make sure to have all required documents ready before starting the application.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faq2">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse2">
+                                    What are the admission requirements?
+                                </button>
+                            </h2>
+                            <div id="collapse2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Admission requirements vary by program. Generally, you need a high school diploma or equivalent for undergraduate programs, and a bachelor's degree for graduate programs. Please check the specific requirements for your chosen program.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faq3">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse3">
+                                    How can I get technical support?
+                                </button>
+                            </h2>
+                            <div id="collapse3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    For technical support, you can contact our IT department at support@college.com or call +1 (234) 567-8902. We also have a help desk available during office hours for immediate assistance.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faq4">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse4">
+                                    What are the tuition fees?
+                                </button>
+                            </h2>
+                            <div id="collapse4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Tuition fees vary by program and are subject to change. Please contact our admissions office for the most current fee structure. We also offer various scholarships and financial aid options for eligible students.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Form submission handling
+document.querySelector('form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    // Get form data
+    const formData = new FormData(this);
+    const firstName = document.getElementById('firstName').value;
+    const lastName = document.getElementById('lastName').value;
+    const email = document.getElementById('email').value;
+    const subject = document.getElementById('subject').value;
+    const message = document.getElementById('message').value;
+    
+    // Simple validation
+    if (!firstName || !lastName || !email || !subject || !message) {
+        alert('Please fill in all required fields.');
+        return;
+    }
+    
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        alert('Please enter a valid email address.');
+        return;
+    }
+    
+    // Simulate form submission
+    alert('Thank you for your message! We will get back to you soon.');
+    this.reset();
+});
+</script>
+{% endblock %} 

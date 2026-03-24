@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block title %}Admin · Create Notification{% endblock %}
+{% block content %}
+<div class="container py-4">
+  <div class="d-flex align-items-center mb-3">
+    <h2 class="mb-0"><i class="fas fa-bell me-2"></i>Create Notification</h2>
+    <a class="btn btn-sm btn-outline-secondary ms-auto" href="{{ url_for('admin_dashboard') }}">Back</a>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <form method="post" class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label">Title</label>
+          <input type="text" class="form-control" name="title" maxlength="120" required>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Type</label>
+          <select class="form-select" name="type" required>
+            <option value="notification">Notification</option>
+            <option value="assignment">Assignment</option>
+            <option value="fee">Fee</option>
+            <option value="event">Event</option>
+            <option value="system">System</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Priority</label>
+          <select class="form-select" name="priority" required>
+            <option value="low">Low</option>
+            <option value="normal" selected>Normal</option>
+            <option value="high">High</option>
+            <option value="urgent">Urgent</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Target Role</label>
+          <select class="form-select" name="target_role" required>
+            <option value="all">All</option>
+            <option value="student">Students</option>
+            <option value="faculty">Faculty</option>
+            <option value="admin">Admins</option>
+          </select>
+        </div>
+        <div class="col-12">
+          <label class="form-label">Message</label>
+          <textarea class="form-control" name="message" rows="5" required></textarea>
+          <div class="form-text">Emails will be sent if SMTP is configured in environment variables.</div>
+        </div>
+        <div class="col-12">
+          <button class="btn btn-primary" type="submit">Send Notification</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

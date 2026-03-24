@@ -1,0 +1,193 @@
+{% extends 'base.html' %}
+{% block title %}Admin · Fees{% endblock %}
+{% block content %}
+<div class="container py-4">
+  <div class="d-flex align-items-center mb-3">
+    <h2 class="mb-0"><i class="fas fa-file-invoice-dollar me-2"></i>Fees Management</h2>
+  </div>
+
+  <div class="row g-3 mb-3">
+    <div class="col-lg-9">
+      <div class="card h-100">
+        <div class="card-header">Filters</div>
+        <div class="card-body">
+          <form method="get" class="row g-3">
+            <div class="col-md-3">
+              <label class="form-label">Status</label>
+              <select class="form-select" name="status">
+                <option value="">All</option>
+                <option value="pending" {% if filters and filters.status=='pending' %}selected{% endif %}>Pending</option>
+                <option value="paid" {% if filters and filters.status=='paid' %}selected{% endif %}>Paid</option>
+                <option value="overdue" {% if filters and filters.status=='overdue' %}selected{% endif %}>Overdue</option>
+              </select>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">Course</label>
+              <select class="form-select" name="course_id">
+                <option value="">All</option>
+                {% for c in courses %}
+                  <option value="{{ c.id }}" {% if filters and filters.course_id and filters.course_id|int==c.id %}selected{% endif %}>{{ c.name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">Semester</label>
+              <select class="form-select" name="semester_id">
+                <option value="">All</option>
+                {% for s in semesters %}
+                  <option value="{{ s.id }}" {% if filters and filters.semester_id and filters.semester_id|int==s.id %}selected{% endif %}>{{ s.name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">Due Date Range</label>
+              <div class="input-group">
+                <input class="form-control" type="date" name="start" value="{{ filters.start if filters and filters.start }}">
+                <span class="input-group-text">to</span>
+                <input class="form-control" type="date" name="end" value="{{ filters.end if filters and filters.end }}">
+              </div>
+            </div>
+            <div class="col-12 d-flex gap-2">
+              <button class="btn btn-primary" type="submit">Apply</button>
+              <a class="btn btn-outline-secondary" href="{{ url_for('admin_fees') }}">Reset</a>
+              <a class="btn btn-outline-success" href="{{ url_for('export_fees_csv') }}">Export CSV</a>
+              <a class="btn btn-outline-success" href="{{ url_for('export_fees_xlsx') }}">Export Excel</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-3">
+      <div class="card h-100">
+        <div class="card-header">Summary</div>
+        <div class="card-body">
+          <div><strong>Collected:</strong> ₹ {{ '%.2f'|format(summary.collected or 0) }}</div>
+          <div><strong>Outstanding:</strong> ₹ {{ '%.2f'|format(summary.outstanding or 0) }}</div>
+          <div><strong>Overdue Items:</strong> {{ summary.overdue_count or 0 }}</div>
+          <hr>
+          <form method="post" action="{{ url_for('admin_fees_run_reminders') }}" class="d-flex gap-2">
+            <input class="form-control" type="number" name="days_ahead" min="1" value="3">
+            <button class="btn btn-warning" type="submit">Run Reminders</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-header">Assign Fees to Group</div>
+    <div class="card-body">
+      <form method="post" action="{{ url_for('admin_fees_assign_bulk') }}" class="row g-3">
+        <div class="col-md-3">
+          <label class="form-label">Fee Type</label>
+          <select class="form-select" name="fee_type" required>
+            <option>Tuition</option>
+            <option>Hostel</option>
+            <option>Transport</option>
+            <option>Exam</option>
+            <option>Misc</option>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">Amount</label>
+          <input class="form-control" type="number" name="amount" step="0.01" min="0" required>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Due Date</label>
+          <input class="form-control" type="date" name="due_date" required>
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">Course</label>
+          <select class="form-select" name="course_id">
+            <option value="">All</option>
+            {% for c in courses %}
+              <option value="{{ c.id }}">{{ c.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">Semester</label>
+          <select class="form-select" name="semester_id">
+            <option value="">All</option>
+            {% for s in semesters %}
+              <option value="{{ s.id }}">{{ s.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-12">
+          <label class="form-label">Specific Emails (optional)</label>
+          <textarea class="form-control" name="emails" rows="2" placeholder="comma or newline separated emails"></textarea>
+          <div class="form-text">If provided, assignment will be limited to these emails in the selected filters.</div>
+        </div>
+        <div class="col-md-8">
+          <label class="form-label">Remarks (optional)</label>
+          <input class="form-control" type="text" name="remarks" placeholder="e.g., Semester 1 Tuition">
+        </div>
+        <div class="col-md-2 form-check d-flex align-items-end">
+          <input class="form-check-input me-2" type="checkbox" name="notify" id="assign_notify">
+          <label class="form-check-label" for="assign_notify">Notify students</label>
+        </div>
+        <div class="col-md-2 d-flex align-items-end">
+          <button class="btn btn-primary w-100" type="submit">Assign</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-header">Bulk Upload Fees (CSV)</div>
+    <div class="card-body">
+      <form method="post" action="{{ url_for('admin_fees_upload') }}" enctype="multipart/form-data" class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label">CSV File</label>
+          <input class="form-control" type="file" name="csv" accept=".csv" required>
+          <div class="form-text">Columns: student_email, fee_type, amount, due_date (YYYY-MM-DD), remarks</div>
+        </div>
+        <div class="col-md-3 form-check mt-4">
+          <input class="form-check-input" type="checkbox" name="notify" id="notify">
+          <label class="form-check-label" for="notify">Notify students</label>
+        </div>
+        <div class="col-md-3 d-flex align-items-end">
+          <button class="btn btn-primary" type="submit">Upload</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header d-flex align-items-center">Per-Student Totals
+      <div class="ms-auto d-flex gap-2">
+        <a class="btn btn-sm btn-outline-success" href="{{ url_for('export_fees_csv') }}">Export CSV</a>
+        <a class="btn btn-sm btn-outline-success" href="{{ url_for('export_fees_xlsx') }}">Export Excel</a>
+      </div>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-striped table-hover mb-0">
+        <thead>
+          <tr>
+            <th>Student</th>
+            <th>Email</th>
+            <th class="text-end">Total Amount</th>
+            <th class="text-end">Total Paid</th>
+            <th class="text-end">Balance</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in totals %}
+            {% set balance = (row.total_amount or 0) - (row.total_paid or 0) %}
+            <tr>
+              <td>{{ row.name or '' }}</td>
+              <td>{{ row.email }}</td>
+              <td class="text-end">{{ '%.2f'|format(row.total_amount or 0) }}</td>
+              <td class="text-end">{{ '%.2f'|format(row.total_paid or 0) }}</td>
+              <td class="text-end">{{ '%.2f'|format(balance) }}</td>
+              <td class="text-end"><a class="btn btn-sm btn-outline-primary" href="{{ url_for('admin_fees_student', student_id=row.student_id) }}">View / Plan</a></td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

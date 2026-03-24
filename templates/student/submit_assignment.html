@@ -1,0 +1,317 @@
+{% extends "base.html" %}
+
+{% block title %}Submit Assignment - Student{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-upload me-2"></i>Submit Assignment
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <!-- Assignment Information -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="card border-primary">
+                                <div class="card-header">
+                                    <h6 class="mb-0">Assignment Details</h6>
+                                </div>
+                                <div class="card-body">
+                                    <table class="table table-sm">
+                                        <tr>
+                                            <td><strong>Title:</strong></td>
+                                            <td>{{ assignment.title }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Subject:</strong></td>
+                                            <td>{{ assignment.subject.name }} ({{ assignment.subject.code }})</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Faculty:</strong></td>
+                                            <td>{{ assignment.faculty.get_full_name() }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Due Date:</strong></td>
+                                            <td class="{% if assignment.due_date < now %}text-danger{% endif %}">
+                                                {{ assignment.due_date.strftime('%B %d, %Y at %I:%M %p') }}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Max Marks:</strong></td>
+                                            <td>{{ assignment.max_marks }}</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card border-info">
+                                <div class="card-header">
+                                    <h6 class="mb-0">Submission Status</h6>
+                                </div>
+                                <div class="card-body">
+                                    {% if assignment.due_date < now %}
+                                    <div class="alert alert-danger">
+                                        <i class="fas fa-exclamation-triangle me-2"></i>
+                                        <strong>Overdue!</strong> This assignment is past the due date.
+                                    </div>
+                                    {% else %}
+                                    <div class="alert alert-success">
+                                        <i class="fas fa-clock me-2"></i>
+                                        <strong>On Time!</strong> You still have time to submit.
+                                    </div>
+                                    {% endif %}
+                                    
+                                    <div class="mb-2">
+                                        <strong>Time Remaining:</strong><br>
+                                        {% set time_diff = assignment.due_date - now %}
+                                        {% if time_diff.total_seconds() > 0 %}
+                                            {% set days = time_diff.days %}
+                                            {% set hours = (time_diff.seconds // 3600) %}
+                                            {% set minutes = (time_diff.seconds % 3600) // 60 %}
+                                            <span class="text-success">
+                                                {{ days }} days, {{ hours }} hours, {{ minutes }} minutes
+                                            </span>
+                                        {% else %}
+                                            <span class="text-danger">Overdue</span>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    {% if assignment.file_path %}
+                                    <div class="mb-2">
+                                        <strong>Assignment File:</strong><br>
+                                        <a href="{{ url_for('static', filename=assignment.file_path) }}" 
+                                           class="btn btn-outline-primary btn-sm" target="_blank">
+                                            <i class="fas fa-download me-1"></i>Download Assignment
+                                        </a>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% if assignment.description %}
+                    <div class="mb-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0">Assignment Description</h6>
+                            </div>
+                            <div class="card-body">
+                                <p class="mb-0">{{ assignment.description }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Submission Form -->
+                    <form method="POST" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="submission_text" class="form-label">Assignment Text (Optional)</label>
+                            <textarea class="form-control" id="submission_text" name="submission_text" 
+                                      rows="8" placeholder="Enter your assignment text here..."></textarea>
+                            <div class="form-text">
+                                You can type your assignment directly here or upload a file below, or both.
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="file" class="form-label">Upload File (Optional)</label>
+                            <input type="file" class="form-control" id="file" name="file" 
+                                   accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png">
+                            <div class="form-text">
+                                Supported formats: PDF, DOC, DOCX, TXT, JPG, JPEG, PNG (Max size: 16MB)
+                            </div>
+                        </div>
+
+                        <!-- File Preview -->
+                        <div id="filePreview" class="mb-3" style="display: none;">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6 class="mb-0">File Preview</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div id="previewContent"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submission Guidelines -->
+                        <div class="mb-3">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h6><i class="fas fa-info-circle text-primary me-2"></i>Submission Guidelines</h6>
+                                    <ul class="mb-0">
+                                        <li>Ensure your submission is complete and follows the assignment requirements</li>
+                                        <li>Check that your file is not corrupted and can be opened</li>
+                                        <li>Make sure your submission is within the file size limit (16MB)</li>
+                                        <li>Late submissions will be marked but may affect your grade</li>
+                                        <li>You can only submit once per assignment</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Confirmation -->
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="confirm" required>
+                                <label class="form-check-label" for="confirm">
+                                    I confirm that this is my own work and I have not plagiarized from any source.
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{{ url_for('student_assignments') }}" class="btn btn-secondary me-md-2">
+                                <i class="fas fa-arrow-left me-1"></i>Back to Assignments
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-paper-plane me-1"></i>Submit Assignment
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Help Section -->
+            <div class="card mt-4">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h6><i class="fas fa-question-circle text-info me-2"></i>Need Help?</h6>
+                            <p class="text-muted mb-0">
+                                If you're having trouble submitting your assignment, please contact your faculty 
+                                or the technical support team. Make sure to include your student ID and assignment details.
+                            </p>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <a href="{{ url_for('contact') }}" class="btn btn-outline-info">
+                                <i class="fas fa-headset me-1"></i>Get Support
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// File preview functionality
+document.getElementById('file').addEventListener('change', function() {
+    const file = this.files[0];
+    const preview = document.getElementById('filePreview');
+    const previewContent = document.getElementById('previewContent');
+    
+    if (file) {
+        // Show file information
+        previewContent.innerHTML = `
+            <div class="row">
+                <div class="col-md-6">
+                    <strong>File Name:</strong> ${file.name}<br>
+                    <strong>File Size:</strong> ${(file.size / 1024 / 1024).toFixed(2)} MB<br>
+                    <strong>File Type:</strong> ${file.type || 'Unknown'}
+                </div>
+                <div class="col-md-6">
+                    <strong>Last Modified:</strong> ${new Date(file.lastModified).toLocaleString()}
+                </div>
+            </div>
+        `;
+        
+        // Show preview for image files
+        if (file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                previewContent.innerHTML += `
+                    <div class="mt-3">
+                        <strong>Preview:</strong><br>
+                        <img src="${e.target.result}" class="img-fluid mt-2" style="max-height: 200px;">
+                    </div>
+                `;
+            };
+            reader.readAsDataURL(file);
+        }
+        
+        preview.style.display = 'block';
+    } else {
+        preview.style.display = 'none';
+    }
+});
+
+// Form validation
+document.querySelector('form').addEventListener('submit', function(e) {
+    const submissionText = document.getElementById('submission_text').value.trim();
+    const file = document.getElementById('file').files[0];
+    const confirm = document.getElementById('confirm').checked;
+    
+    // Check if at least one submission method is provided
+    if (!submissionText && !file) {
+        e.preventDefault();
+        alert('Please provide either assignment text or upload a file.');
+        return;
+    }
+    
+    // Check file size
+    if (file && file.size > 16 * 1024 * 1024) {
+        e.preventDefault();
+        alert('File size must be less than 16MB.');
+        return;
+    }
+    
+    // Check confirmation
+    if (!confirm) {
+        e.preventDefault();
+        alert('Please confirm that this is your own work.');
+        return;
+    }
+    
+    // Show confirmation dialog
+    if (!confirm('Are you sure you want to submit this assignment? You cannot make changes after submission.')) {
+        e.preventDefault();
+        return;
+    }
+});
+
+// Character counter for text submission
+document.getElementById('submission_text').addEventListener('input', function() {
+    const maxLength = 10000; // 10,000 characters limit
+    const currentLength = this.value.length;
+    const remaining = maxLength - currentLength;
+    
+    // Update character count display
+    let counter = document.getElementById('charCounter');
+    if (!counter) {
+        counter = document.createElement('div');
+        counter.id = 'charCounter';
+        counter.className = 'form-text';
+        this.parentNode.appendChild(counter);
+    }
+    
+    counter.textContent = `${currentLength} / ${maxLength} characters`;
+    
+    if (remaining < 0) {
+        counter.className = 'form-text text-danger';
+        this.value = this.value.substring(0, maxLength);
+    } else if (remaining < 100) {
+        counter.className = 'form-text text-warning';
+    } else {
+        counter.className = 'form-text';
+    }
+});
+
+// Auto-save functionality (optional)
+let autoSaveTimer;
+document.getElementById('submission_text').addEventListener('input', function() {
+    clearTimeout(autoSaveTimer);
+    autoSaveTimer = setTimeout(function() {
+        // Auto-save logic could be implemented here
+        console.log('Auto-saving...');
+    }, 30000); // Auto-save every 30 seconds
+});
+</script>
+{% endblock %} 

@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}RITE - College Management System{% endblock %}</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Favicon & App Icons -->
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/rite-logo.png') }}">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" sizes="any">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='img/rite-logo.png') }}">
+    <!-- Custom CSS -->
+    <style>
+        :root {
+            /* Brand palette tuned to logo blue */
+            --primary-gradient-start: #1f64b1; /* blue */
+            --primary-gradient-end: #0e3e7c;   /* deep blue */
+            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --card-hover-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            --footer-bg: #343a40;
+            --text-dark: #212529;
+            --text-light: #f8f9fa;
+            --bg-light: #f8f9fa;
+            --bg-dark: #121212;
+            --card-bg-light: #ffffff;
+            --card-bg-dark: #1e1e1e;
+        }
+
+        /* Brand logo sizing */
+        .brand-logo {
+            height: 48px; /* default desktop */
+            width: auto;
+        }
+        @media (max-width: 992px) { /* tablets */
+            .brand-logo { height: 36px; }
+        }
+        @media (max-width: 576px) { /* phones */
+            .brand-logo { height: 28px; }
+        }
+
+        .dark-mode {
+            --primary-gradient-start: #1a1a2e;
+            --primary-gradient-end: #16213e;
+            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            --card-hover-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+            --footer-bg: #121212;
+            --text-dark: #f8f9fa;
+            --text-light: #212529;
+            --bg-light: #f8f9fa;
+            --bg-dark: #121212;
+            --card-bg-light: #ffffff;
+            --card-bg-dark: #2d2d2d;
+            background-color: #121212;
+            color: #f8f9fa;
+        }
+        
+        .dark-mode-text {
+            color: var(--text-dark) !important;
+        }
+        
+        /* Override Bootstrap's text-muted class for dark mode */
+        .dark-mode .text-muted {
+            --bs-text-opacity: 1;
+            color: rgba(248, 249, 250, 0.75) !important;
+        }
+        
+        .dark-mode .text-muted.dark-mode-text {
+            color: rgba(248, 249, 250, 0.75) !important;
+        }
+        
+        /* Dark mode background overrides */
+        .dark-mode .bg-light {
+            background-color: var(--bg-dark) !important;
+            color: var(--text-dark) !important;
+        }
+        
+        .dark-mode .bg-white {
+            background-color: var(--card-bg-dark) !important;
+            color: var(--text-dark) !important;
+        }
+        
+        /* Dark mode table styles */
+        .dark-mode .table {
+            --bs-table-bg: var(--card-bg-dark);
+            --bs-table-color: var(--text-dark);
+            color: var(--text-dark);
+        }
+        
+        .dark-mode .table th,
+        .dark-mode .table td {
+            border-color: rgba(255, 255, 255, 0.1);
+            color: var(--text-dark);
+        }
+        
+        .dark-mode .table-striped > tbody > tr:nth-of-type(odd) > td,
+        .dark-mode .table-striped > tbody > tr:nth-of-type(odd) > th {
+            --bs-table-accent-bg: rgba(255, 255, 255, 0.05);
+        }
+        
+        /* Dark mode form controls */
+        .dark-mode .form-control {
+            background-color: var(--card-bg-dark);
+            border-color: rgba(255, 255, 255, 0.2);
+            color: var(--text-dark);
+        }
+        
+        .dark-mode .form-control:focus {
+            background-color: var(--card-bg-dark);
+            border-color: var(--primary-gradient-start);
+            color: var(--text-dark);
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+        
+        /* Dark mode dropdown */
+        .dark-mode .dropdown-menu {
+            background-color: var(--card-bg-dark);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        .dark-mode .dropdown-item {
+            color: var(--text-dark);
+        }
+        
+        .dark-mode .dropdown-item:hover,
+        .dark-mode .dropdown-item:focus {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--text-dark);
+        }
+        
+        /* Dark mode accordion styles */
+        .dark-mode .accordion {
+            --bs-accordion-bg: var(--card-bg-dark);
+            --bs-accordion-color: var(--text-dark);
+        }
+        
+        .dark-mode .accordion-item {
+            background-color: var(--card-bg-dark);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .dark-mode .accordion-button {
+            background-color: var(--card-bg-dark);
+            color: var(--text-dark);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .dark-mode .accordion-button:not(.collapsed) {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--text-dark);
+            box-shadow: none;
+        }
+        
+        .dark-mode .accordion-button:focus {
+            border-color: var(--primary-gradient-start);
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+        
+        .dark-mode .accordion-body {
+            background-color: var(--card-bg-dark);
+            color: var(--text-dark);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Dark mode card header */
+        .dark-mode .card-header {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.1);
+            color: var(--text-dark);
+        }
+
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .hero-section {
+            background:
+                radial-gradient(900px 500px at -10% -20%, rgba(255,255,255,0.06), transparent 60%),
+                linear-gradient(120deg, var(--primary-gradient-start) 0%, var(--primary-gradient-end) 70%);
+            color: #fff;
+            border-radius: 1rem;
+            overflow: hidden;
+            padding: 4rem 0;
+            position: relative;
+        }
+
+        /* dotted overlay */
+        .hero-section::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(rgba(255,255,255,0.12) 1px, transparent 1px);
+            background-size: 20px 20px;
+            opacity: 0.12;
+            pointer-events: none;
+        }
+        
+        @media (prefers-reduced-motion: reduce) {
+            .ripple, .fade-in-up, .staggered-animation { transition: none !important; }
+            .hero-logo-card:hover::after { animation: none; opacity: 0; }
+        }
+        
+        .hero-logo-card {
+            padding: 1rem;
+            border-radius: 16px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.18);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+            backdrop-filter: blur(6px);
+            display: inline-block;
+            position: relative;
+            isolation: isolate;
+        }
+
+        /* subtle gradient border */
+        .hero-logo-card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            padding: 1px;
+            background: linear-gradient(135deg, #8cc0ff, #4f9cff, #2a6ee8);
+            -webkit-mask:
+              linear-gradient(#000 0 0) content-box,
+              linear-gradient(#000 0 0);
+            mask:
+              linear-gradient(#000 0 0) content-box,
+              linear-gradient(#000 0 0);
+            -webkit-mask-composite: xor;
+                    mask-composite: exclude;
+            pointer-events: none;
+        }
+
+        /* hover shine */
+        .hero-logo-card::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -150%;
+            height: 100%;
+            width: 120%;
+            background: linear-gradient(120deg, rgba(255,255,255,0) 30%, rgba(255,255,255,0.25) 50%, rgba(255,255,255,0) 70%);
+            transform: skewX(-20deg);
+            opacity: 0;
+            pointer-events: none;
+        }
+        .hero-logo-card:hover::after {
+            animation: shineSweep 1.6s ease;
+            opacity: 1;
+        }
+        @keyframes shineSweep {
+            from { left: -150%; }
+            to   { left: 130%; }
+        }
+        
+        .card {
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: var(--card-shadow);
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+            background-color: var(--card-bg-light);
+        }
+        
+        .dark-mode .card {
+            background-color: var(--card-bg-dark);
+            color: var(--text-dark);
+        }
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(120deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 1;
+        }
+        
+        .card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: var(--card-hover-shadow);
+        }
+        
+        .card:hover::before {
+            opacity: 1;
+        }
+        
+        .card .card-body {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .feature-icon {
+            font-size: 3rem;
+            color: #667eea;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .feature-icon::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: rgba(102, 126, 234, 0.1);
+            top: 0;
+            left: 0;
+            z-index: -1;
+            transition: transform 0.3s ease;
+            transform: scale(1);
+        }
+        
+        .card:hover .feature-icon {
+            transform: scale(1.2);
+        }
+        
+        .card:hover .feature-icon::after {
+            transform: scale(1.5);
+        }
+        
+        .footer {
+            background-color: var(--footer-bg);
+            color: white;
+            padding: 2rem 0;
+            margin-top: 3rem;
+            transition: background-color 0.5s ease;
+        }
+        
+        .alert {
+            margin-top: 1rem;
+            animation: fadeInDown 0.5s ease forwards;
+        }
+        
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .sidebar {
+            min-height: calc(100vh - 56px);
+            background-color: #f8f9fa;
+            transition: background-color 0.5s ease;
+        }
+        
+        .sidebar .nav-link {
+            color: #495057;
+            padding: 0.75rem 1rem;
+            border-radius: 0.25rem;
+            margin: 0.25rem 0;
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar .nav-link:hover {
+            background-color: #e9ecef;
+            transform: translateX(5px);
+        }
+        
+        .sidebar .nav-link.active {
+            background-color: #667eea;
+            color: white;
+        }
+        
+        /* Theme toggle button */
+        .theme-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: var(--primary-gradient-start);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .theme-toggle:hover {
+            transform: scale(1.1) rotate(15deg);
+        }
+        
+        /* Ripple effect for buttons */
+        .ripple {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .ripple:after {
+            content: "";
+            display: block;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            background-image: radial-gradient(circle, #fff 10%, transparent 10.01%);
+            background-repeat: no-repeat;
+            background-position: 50%;
+            transform: scale(10, 10);
+            opacity: 0;
+            transition: transform .5s, opacity 1s;
+        }
+        
+        .ripple:active:after {
+            transform: scale(0, 0);
+            opacity: .3;
+            transition: 0s;
+        }
+        
+        /* Entrance animations */
+        .fade-in-up {
+            animation: fadeInUp 0.8s ease forwards;
+            opacity: 0;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .staggered-animation {
+            animation-delay: calc(var(--animation-order) * 0.1s);
+        }
+        
+        /* Ripple effect for JavaScript implementation */
+        .ripple-effect {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.7);
+            transform: scale(0);
+            animation: ripple 0.6s linear;
+            pointer-events: none;
+        }
+        
+        @keyframes ripple {
+            to {
+                transform: scale(2);
+                opacity: 0;
+            }
+        }
+        
+        /* Statistics section icons */
+        .stat-icon {
+            transition: transform 0.5s ease;
+        }
+        
+        .stat-icon:hover {
+            transform: scale(1.2) rotate(5deg);
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+    <body>
+        <!-- Skip to main content for accessibility -->
+        <a href="#main-content" class="visually-hidden-focusable position-absolute top-0 start-0 m-2 btn btn-light btn-sm">Skip to main content</a>
+
+        <!-- Navigation -->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary" role="navigation" aria-label="Main navigation">
+            <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="{{ url_for('index') }}" aria-label="RITE Home">
+                <picture class="me-2">
+                    <source type="image/png" srcset="{{ url_for('static', filename='img/rite-logo.png') }}">
+                    <img src="{{ url_for('static', filename='img/rite-logo.svg') }}" alt="RITE Logo" class="brand-logo" loading="eager">
+                </picture>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('index') }}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('admissions') }}">Admissions</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('departments') }}">Departments</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('placements') }}">Placements</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('courses') }}">Courses</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('events') }}">Events</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('library') }}">Library</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('contact') }}">Contact</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav align-items-center">
+                    <!-- Global Search Trigger -->
+                    <li class="nav-item me-2">
+                        <button class="btn btn-light btn-sm" id="globalSearchBtn" type="button" data-bs-toggle="modal" data-bs-target="#globalSearchModal" title="Search (Ctrl/Cmd+K)">
+                            <i class="fas fa-search"></i>
+                            <span class="d-none d-md-inline ms-1">Search</span>
+                        </button>
+                    </li>
+                    {% if current_user.is_authenticated %}
+                    <!-- Notifications Bell -->
+                    <li class="nav-item me-2">
+                        <button class="btn btn-light btn-sm position-relative" id="notificationsBtn" type="button" data-bs-toggle="modal" data-bs-target="#notificationsModal" title="Notifications">
+                            <i class="fas fa-bell"></i>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none" id="notificationsBadge">0</span>
+                        </button>
+                    </li>
+                    {% endif %}
+                    {% if current_user.is_authenticated %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-user me-1"></i>{{ current_user.get_full_name() }}
+                            </a>
+                            <ul class="dropdown-menu">
+                                {% if current_user.is_admin() %}
+                                    <li><a class="dropdown-item" href="{{ url_for('admin_dashboard') }}">Admin Dashboard</a></li>
+                                    <li><a class="dropdown-item" href="{{ url_for('admin_users') }}">Manage Users</a></li>
+                                    <li><a class="dropdown-item" href="{{ url_for('admin_register') }}">Register User</a></li>
+                                    <li><a class="dropdown-item" href="{{ url_for('admin_fees') }}">Fees Management</a></li>
+                                    <li><a class="dropdown-item" href="{{ url_for('create_notification') }}">Create Notification</a></li>
+                                {% elif current_user.is_faculty() %}
+                                    <li><a class="dropdown-item" href="{{ url_for('faculty_dashboard') }}">Faculty Dashboard</a></li>
+                                    <li><a class="dropdown-item" href="{{ url_for('faculty_assignments') }}">Assignments</a></li>
+                                {% else %}
+                                    <li><a class="dropdown-item" href="{{ url_for('student_dashboard') }}">Student Dashboard</a></li>
+                                    <li><a class="dropdown-item" href="{{ url_for('student_assignments') }}">My Assignments</a></li>
+                                    <li><a class="dropdown-item" href="{{ url_for('student_fees') }}">Fees</a></li>
+                                {% endif %}
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{{ url_for('logout') }}">Logout</a></li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('login') }}">Login</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+
+    <!-- Notifications Modal -->
+    <div class="modal fade" id="notificationsModal" tabindex="-1" aria-labelledby="notificationsLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="notificationsLabel"><i class="fas fa-bell me-2"></i>Notifications</h5>
+                    <div class="ms-auto me-3">
+                        <button class="btn btn-sm btn-outline-secondary" id="markAllNotificationsRead">Mark all as read</button>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="notificationsList">
+                        <p class="text-muted mb-0">Loading notifications...</p>
+                    </div>
+                    <div class="mt-3 text-end">
+                        <a href="{{ url_for('notifications') }}" class="btn btn-link">Open Inbox</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
+    </nav>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="container mt-3">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Main Content -->
+    <main id="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Global Search Modal -->
+    <div class="modal fade" id="globalSearchModal" tabindex="-1" aria-labelledby="globalSearchLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="globalSearchLabel"><i class="fas fa-search me-2"></i>Global Search</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" id="search-addon"><i class="fas fa-search"></i></span>
+                        <input type="text" id="globalSearchInput" class="form-control" placeholder="Search users, courses, subjects, books..." aria-label="Global search" aria-describedby="search-addon">
+                    </div>
+                    <div id="globalSearchResults">
+                        <p class="text-muted mb-0">Start typing to search. Use Ctrl/Cmd+K anytime.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="d-flex align-items-center mb-2">
+                        <picture class="me-2" style="height:32px;display:inline-block">
+                            <source type="image/png" srcset="{{ url_for('static', filename='img/rite-logo.png') }}">
+                            <img src="{{ url_for('static', filename='img/rite-logo.svg') }}" alt="RITE Logo" class="brand-logo" style="height:32px" loading="lazy">
+                        </picture>
+                        <h5 class="mb-0">RADHAKRISHNA INSTITUTE OF TECHNOLOGY AND ENGINEERING</h5>
+                    </div>
+                    <p>A comprehensive platform for managing college operations, student records, and academic activities.</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="{{ url_for('courses') }}" class="text-light">Courses</a></li>
+                        <li><a href="{{ url_for('events') }}" class="text-light">Events</a></li>
+                        <li><a href="{{ url_for('library') }}" class="text-light">Library</a></li>
+                        <li><a href="{{ url_for('contact') }}" class="text-light">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5>Contact Info</h5>
+                    <p>
+                        <i class="fas fa-map-marker-alt me-2"></i>Khordha, Odisha, India<br>
+                        <i class="fas fa-phone me-2"></i>+91 94370 12345<br>
+                        <i class="fas fa-envelope me-2"></i>info@rite.ac.in
+                    </p>
+                </div>
+            </div>
+            <hr class="my-4">
+            <div class="text-center">
+                <p>&copy; 2024 RADHAKRISHNA INSTITUTE OF TECHNOLOGY AND ENGINEERING. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Frontend JS -->
+    <script src="{{ url_for('static', filename='js/frontend.js') }}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html> 

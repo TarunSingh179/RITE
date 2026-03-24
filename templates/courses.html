@@ -1,0 +1,378 @@
+{% extends "base.html" %}
+
+{% block title %}Courses - College Management System{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h2 class="card-title">
+                                <i class="fas fa-graduation-cap me-2"></i>Academic Programs
+                            </h2>
+                            <p class="card-text">Explore our diverse range of undergraduate and postgraduate programs designed to prepare you for a successful career.</p>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <i class="fas fa-university" style="font-size: 4rem; opacity: 0.7;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Course Categories -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">Program Categories</h5>
+                    <div class="row text-center">
+                        <div class="col-md-4 mb-3">
+                            <div class="p-3 border rounded">
+                                <i class="fas fa-laptop-code text-primary" style="font-size: 2rem;"></i>
+                                <h6 class="mt-2">Engineering</h6>
+                                <p class="text-muted small">Computer Science, Information Technology</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="p-3 border rounded">
+                                <i class="fas fa-chart-line text-success" style="font-size: 2rem;"></i>
+                                <h6 class="mt-2">Business</h6>
+                                <p class="text-muted small">Management, Administration</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="p-3 border rounded">
+                                <i class="fas fa-cogs text-warning" style="font-size: 2rem;"></i>
+                                <h6 class="mt-2">Technology</h6>
+                                <p class="text-muted small">Computer Applications, Software Development</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Courses Grid -->
+    <div class="row">
+        {% for course in courses %}
+        <div class="col-lg-6 mb-4">
+            <div class="card h-100 shadow">
+                <div class="card-header bg-primary text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">{{ course.name }}</h5>
+                        <span class="badge bg-light text-primary">{{ course.code }}</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">{{ course.description }}</p>
+                    
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <small class="text-muted">
+                                <i class="fas fa-clock me-1"></i>
+                                <strong>Duration:</strong><br>
+                                {{ course.duration }}
+                            </small>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-muted">
+                                <i class="fas fa-layer-group me-1"></i>
+                                <strong>Semesters:</strong><br>
+                                {{ course.total_semesters }} Semesters
+                            </small>
+                        </div>
+                    </div>
+                    
+                    <!-- Semester Structure -->
+                    <div class="mb-3">
+                        <h6 class="text-primary">Semester Structure</h6>
+                        <div class="row">
+                            {% for semester in course.semesters %}
+                            <div class="col-md-6 mb-2">
+                                <span class="badge bg-outline-primary">{{ semester.name }}</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    
+                    <!-- Sample Subjects (if available) -->
+                    {% if course.semesters and course.semesters[0].subjects %}
+                    <div class="mb-3">
+                        <h6 class="text-success">Sample Subjects (1st Semester)</h6>
+                        <div class="row">
+                            {% for subject in course.semesters[0].subjects[:4] %}
+                            <div class="col-md-6 mb-1">
+                                <small class="text-muted">
+                                    <i class="fas fa-book me-1"></i>
+                                    {{ subject.name }} ({{ subject.credits }} credits)
+                                </small>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="card-footer bg-transparent">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <button type="button" class="btn btn-outline-primary btn-sm" 
+                                data-bs-toggle="modal" data-bs-target="#courseModal{{ course.id }}">
+                            <i class="fas fa-info-circle me-1"></i>View Details
+                        </button>
+                        {% if current_user.is_authenticated and current_user.is_admin() %}
+                        <button type="button" class="btn btn-outline-success btn-sm">
+                            <i class="fas fa-edit me-1"></i>Edit Course
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Course Comparison -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Program Comparison</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Program</th>
+                                    <th>Duration</th>
+                                    <th>Semesters</th>
+                                    <th>Focus Area</th>
+                                    <th>Career Prospects</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>BTech</strong></td>
+                                    <td>4 years</td>
+                                    <td>8 semesters</td>
+                                    <td>Engineering & Technology</td>
+                                    <td>Software Engineer, System Analyst, Data Scientist</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>MCA</strong></td>
+                                    <td>2 years</td>
+                                    <td>4 semesters</td>
+                                    <td>Computer Applications</td>
+                                    <td>Application Developer, IT Consultant, Project Manager</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>MBA</strong></td>
+                                    <td>2 years</td>
+                                    <td>4 semesters</td>
+                                    <td>Business Administration</td>
+                                    <td>Business Analyst, Marketing Manager, HR Manager</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admission Information -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h5 class="card-title">Admission Information</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Eligibility Criteria</h6>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-check text-success me-2"></i>BTech: 10+2 with PCM (50% minimum)</li>
+                                <li><i class="fas fa-check text-success me-2"></i>MCA: Bachelor's degree in any discipline</li>
+                                <li><i class="fas fa-check text-success me-2"></i>MBA: Bachelor's degree (50% minimum)</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Admission Process</h6>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-arrow-right text-primary me-2"></i>Online Application</li>
+                                <li><i class="fas fa-arrow-right text-primary me-2"></i>Entrance Test</li>
+                                <li><i class="fas fa-arrow-right text-primary me-2"></i>Personal Interview</li>
+                                <li><i class="fas fa-arrow-right text-primary me-2"></i>Document Verification</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Course Detail Modals -->
+{% for course in courses %}
+<div class="modal fade" id="courseModal{{ course.id }}" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">{{ course.name }} - Detailed Information</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        <h4>{{ course.name }}</h4>
+                        <p class="text-muted">{{ course.description }}</p>
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="card bg-light">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-clock text-primary" style="font-size: 2rem;"></i>
+                                        <h6 class="mt-2">Duration</h6>
+                                        <p class="mb-0">{{ course.duration }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card bg-light">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-layer-group text-success" style="font-size: 2rem;"></i>
+                                        <h6 class="mt-2">Semesters</h6>
+                                        <p class="mb-0">{{ course.total_semesters }} Semesters</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Semester-wise Subjects -->
+                        <h5 class="mb-3">Curriculum Structure</h5>
+                        <div class="accordion" id="accordion{{ course.id }}">
+                            {% for semester in course.semesters %}
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="heading{{ semester.id }}">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
+                                            data-bs-target="#collapse{{ semester.id }}">
+                                        {{ semester.name }}
+                                    </button>
+                                </h2>
+                                <div id="collapse{{ semester.id }}" class="accordion-collapse collapse" 
+                                     data-bs-parent="#accordion{{ course.id }}">
+                                    <div class="accordion-body">
+                                        {% if semester.subjects %}
+                                        <div class="table-responsive">
+                                            <table class="table table-sm">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Subject</th>
+                                                        <th>Code</th>
+                                                        <th>Credits</th>
+                                                        <th>Description</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for subject in semester.subjects %}
+                                                    <tr>
+                                                        <td>{{ subject.name }}</td>
+                                                        <td><span class="badge bg-primary">{{ subject.code }}</span></td>
+                                                        <td>{{ subject.credits }}</td>
+                                                        <td>{{ subject.description[:50] }}{% if subject.description|length > 50 %}...{% endif %}</td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        {% else %}
+                                        <p class="text-muted">Subjects will be updated soon.</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0">Quick Info</h6>
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-unstyled">
+                                    <li class="mb-2">
+                                        <strong>Course Code:</strong><br>
+                                        <span class="badge bg-primary">{{ course.code }}</span>
+                                    </li>
+                                    <li class="mb-2">
+                                        <strong>Duration:</strong><br>
+                                        {{ course.duration }}
+                                    </li>
+                                    <li class="mb-2">
+                                        <strong>Total Credits:</strong><br>
+                                        {% set total_credits = 0 %}
+                                        {% for semester in course.semesters %}
+                                            {% for subject in semester.subjects %}
+                                                {% set total_credits = total_credits + subject.credits %}
+                                            {% endfor %}
+                                        {% endfor %}
+                                        {{ total_credits if total_credits > 0 else 'TBD' }}
+                                    </li>
+                                    <li class="mb-2">
+                                        <strong>Mode:</strong><br>
+                                        Full-time
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="card mt-3">
+                            <div class="card-header">
+                                <h6 class="mb-0">Career Opportunities</h6>
+                            </div>
+                            <div class="card-body">
+                                {% if course.code == 'BTECH' %}
+                                    <ul class="list-unstyled">
+                                        <li><i class="fas fa-arrow-right text-primary me-1"></i>Software Engineer</li>
+                                        <li><i class="fas fa-arrow-right text-primary me-1"></i>System Analyst</li>
+                                        <li><i class="fas fa-arrow-right text-primary me-1"></i>Data Scientist</li>
+                                        <li><i class="fas fa-arrow-right text-primary me-1"></i>Network Engineer</li>
+                                    </ul>
+                                {% elif course.code == 'MCA' %}
+                                    <ul class="list-unstyled">
+                                        <li><i class="fas fa-arrow-right text-primary me-1"></i>Application Developer</li>
+                                        <li><i class="fas fa-arrow-right text-primary me-1"></i>IT Consultant</li>
+                                        <li><i class="fas fa-arrow-right text-primary me-1"></i>Project Manager</li>
+                                        <li><i class="fas fa-arrow-right text-primary me-1"></i>Database Administrator</li>
+                                    </ul>
+                                {% elif course.code == 'MBA' %}
+                                    <ul class="list-unstyled">
+                                        <li><i class="fas fa-arrow-right text-primary me-1"></i>Business Analyst</li>
+                                        <li><i class="fas fa-arrow-right text-primary me-1"></i>Marketing Manager</li>
+                                        <li><i class="fas fa-arrow-right text-primary me-1"></i>HR Manager</li>
+                                        <li><i class="fas fa-arrow-right text-primary me-1"></i>Financial Analyst</li>
+                                    </ul>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">
+                    <i class="fas fa-download me-1"></i>Download Brochure
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% endblock %} 

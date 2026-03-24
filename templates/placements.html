@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Placements - RITE{% endblock %}
+
+{% block content %}
+<section class="py-5 fade-in-up">
+  <div class="container">
+    <div class="row text-center mb-5">
+      <div class="col-lg-10 mx-auto">
+        <h1 class="display-5 fw-bold">Placements</h1>
+        <p class="lead text-muted dark-mode-text">Strong industry connect and excellent placement records.</p>
+      </div>
+    </div>
+
+    <div class="row text-center mb-4">
+      <div class="col-md-4">
+        <div class="p-4 bg-light rounded-3">
+          <h3 class="fw-bold">95%</h3>
+          <p class="mb-0">Placement Rate</p>
+        </div>
+      </div>
+      <div class="col-md-4 mt-3 mt-md-0">
+        <div class="p-4 bg-light rounded-3">
+          <h3 class="fw-bold">₹12 LPA</h3>
+          <p class="mb-0">Average Package</p>
+        </div>
+      </div>
+      <div class="col-md-4 mt-3 mt-md-0">
+        <div class="p-4 bg-light rounded-3">
+          <h3 class="fw-bold">₹32 LPA</h3>
+          <p class="mb-0">Highest Package</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-4">
+      {% set recruiters = ['TCS','Infosys','Wipro','Accenture','Cognizant','Capgemini'] %}
+      {% for r in recruiters %}
+      <div class="col-6 col-md-4 col-lg-2" style="--animation-order: {{ loop.index }};">
+        <div class="card h-100 text-center border-0 shadow-sm staggered-animation">
+          <div class="card-body">
+            <i class="fas fa-building fa-2x text-primary mb-2"></i>
+            <div class="fw-semibold">{{ r }}</div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <div class="text-center mt-5">
+      <a href="{{ url_for('contact') }}" class="btn btn-primary btn-lg ripple"><i class="fas fa-envelope me-2"></i>Contact Placement Cell</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

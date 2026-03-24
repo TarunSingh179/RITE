@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% block title %}Receipt · {{ fee.receipt_number or ('RCP' ~ fee.id) }}{% endblock %}
+{% block content %}
+<div class="container py-4">
+  <div class="card">
+    <div class="card-body">
+      <div class="d-flex align-items-center mb-3">
+        <div>
+          <h4 class="mb-0">Payment Receipt</h4>
+          <div class="text-muted small">{{ now.strftime('%Y-%m-%d %H:%M') }}</div>
+        </div>
+        <div class="ms-auto text-end">
+          <img src="{{ url_for('static', filename='img/rite-logo.png') }}" alt="Logo" style="height:40px">
+        </div>
+      </div>
+
+      <div class="row g-3 mb-3">
+        <div class="col-md-6">
+          <div class="border rounded p-3 h-100">
+            <div class="fw-bold mb-2">Student</div>
+            <div>{{ student.get_full_name() }}</div>
+            <div>{{ student.email }}</div>
+            {% if student.course %}<div>Course: {{ student.course.name }}</div>{% endif %}
+            {% if student.semester %}<div>Semester: {{ student.semester.name }}</div>{% endif %}
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="border rounded p-3 h-100">
+            <div class="fw-bold mb-2">Receipt</div>
+            <div>Receipt #: {{ fee.receipt_number or ('RCP' ~ fee.id) }}</div>
+            <div>Transaction ID: {{ fee.transaction_id or 'N/A' }}</div>
+            <div>Payment Method: {{ fee.payment_method or 'N/A' }}</div>
+            <div>Paid Date: {{ fee.paid_date.strftime('%Y-%m-%d %H:%M') if fee.paid_date else 'N/A' }}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="table-responsive mb-3">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Description</th>
+              <th class="text-end">Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{{ fee.fee_type }} (Due {{ fee.due_date.strftime('%Y-%m-%d') }})</td>
+              <td class="text-end">₹ {{ '%.2f'|format(fee.amount or 0) }}</td>
+            </tr>
+            <tr>
+              <td class="text-end fw-bold">Paid</td>
+              <td class="text-end fw-bold">₹ {{ '%.2f'|format(fee.paid_amount or 0) }}</td>
+            </tr>
+            <tr>
+              <td class="text-end">Balance</td>
+              <td class="text-end">₹ {{ '%.2f'|format((fee.amount or 0) - (fee.paid_amount or 0)) }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="d-print-none">
+        <button class="btn btn-outline-secondary" onclick="window.print()"><i class="fas fa-print me-1"></i>Print</button>
+        <a class="btn btn-primary" href="{{ url_for('admin_fees_student', student_id=student.id) }}">Back</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

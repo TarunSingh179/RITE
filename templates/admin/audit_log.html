@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}Audit Log{% endblock %}
+{% block content %}
+<div class="container mt-5">
+  <h2 class="mb-4">Admin Audit Log</h2>
+  <div class="card shadow-sm">
+    <div class="table-responsive">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>User ID</th>
+            <th>Action</th>
+            <th>Entity</th>
+            <th>Details</th>
+            <th>Time</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for log in logs %}
+          <tr>
+            <td>{{ log.id }}</td>
+            <td>{{ log.user_id }}</td>
+            <td>{{ log.action }}</td>
+            <td>{{ log.entity }}{% if log.entity_id %} #{{ log.entity_id }}{% endif %}</td>
+            <td><small class="text-muted">{{ log.details }}</small></td>
+            <td>{{ (log.created_at or log.timestamp).strftime('%Y-%m-%d %H:%M:%S') if (log.created_at or log.timestamp) else '' }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

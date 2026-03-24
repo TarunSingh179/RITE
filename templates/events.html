@@ -1,0 +1,365 @@
+{% extends "base.html" %}
+
+{% block title %}Events - College Management System{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h2 class="card-title">
+                                <i class="fas fa-calendar-alt me-2"></i>College Events
+                            </h2>
+                            <p class="card-text">Stay updated with the latest events, activities, and important dates.</p>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <i class="fas fa-calendar-check" style="font-size: 4rem; opacity: 0.7;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label for="categoryFilter" class="form-label">Filter by Category</label>
+                            <select class="form-select" id="categoryFilter">
+                                <option value="">All Categories</option>
+                                <option value="Academic">Academic</option>
+                                <option value="Cultural">Cultural</option>
+                                <option value="Sports">Sports</option>
+                                <option value="Technical">Technical</option>
+                                <option value="Workshop">Workshop</option>
+                                <option value="Seminar">Seminar</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="dateFilter" class="form-label">Filter by Date</label>
+                            <select class="form-select" id="dateFilter">
+                                <option value="">All Dates</option>
+                                <option value="today">Today</option>
+                                <option value="week">This Week</option>
+                                <option value="month">This Month</option>
+                                <option value="upcoming">Upcoming</option>
+                                <option value="past">Past Events</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="searchInput" class="form-label">Search Events</label>
+                            <input type="text" class="form-control" id="searchInput" placeholder="Search event title or description">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Events Table -->
+    <div class="mb-3">
+        <input class="search-input form-control" data-target="#eventsTable" placeholder="Search events...">
+    </div>
+    <div class="table-responsive">
+        <table id="eventsTable" class="table table-striped table-hover paginated-table">
+            <thead class="table-dark">
+                <tr>
+                    <th>Title</th>
+                    <th>Category</th>
+                    <th>Date</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for event in events %}
+                <tr>
+                    <td>{{ event.title }}</td>
+                    <td>{{ event.category }}</td>
+                    <td>{{ event.event_date.strftime('%Y-%m-%d') }}</td>
+                    <td>{{ event.description }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+        {% for event in events if event.is_featured %}
+        <div class="col-md-6 col-lg-4 mb-4 event-item" 
+             data-category="{{ event.category }}"
+             data-date="{{ event.event_date.strftime('%Y-%m-%d') }}">
+            <div class="card h-100 shadow featured-event">
+                {% if event.image_path %}
+                    <img src="{{ url_for('static', filename=event.image_path) }}" 
+                         class="card-img-top" style="height: 200px; object-fit: cover;" alt="{{ event.title }}">
+                {% else %}
+                    <div class="card-img-top bg-secondary text-white text-center py-5" style="height: 200px;">
+                        <i class="fas fa-calendar" style="font-size: 3rem;"></i>
+                    </div>
+                {% endif %}
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <span class="badge bg-warning">Featured</span>
+                        <span class="badge bg-primary">{{ event.category }}</span>
+                    </div>
+                    <h5 class="card-title">{{ event.title }}</h5>
+                    <p class="card-text">{{ event.description[:100] }}{% if event.description|length > 100 %}...{% endif %}</p>
+                    
+                    <div class="mb-3">
+                        <small class="text-muted">
+                            <i class="fas fa-calendar me-1"></i>
+                            {{ event.event_date.strftime('%B %d, %Y at %I:%M %p') }}
+                        </small>
+                    </div>
+                    
+                    {% if event.venue %}
+                    <div class="mb-3">
+                        <small class="text-muted">
+                            <i class="fas fa-map-marker-alt me-1"></i>
+                            {{ event.venue }}
+                        </small>
+                    </div>
+                    {% endif %}
+                    
+                    {% if event.organizer %}
+                    <div class="mb-3">
+                        <small class="text-muted">
+                            <i class="fas fa-user me-1"></i>
+                            Organized by {{ event.organizer }}
+                        </small>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="card-footer bg-transparent">
+                    <button type="button" class="btn btn-primary btn-sm w-100" 
+                            data-bs-toggle="modal" data-bs-target="#eventModal{{ event.id }}">
+                        <i class="fas fa-info-circle me-1"></i>View Details
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- All Events -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h3 class="mb-3">All Events</h3>
+        </div>
+        {% for event in events %}
+        <div class="col-md-6 col-lg-4 mb-4 event-item" 
+             data-category="{{ event.category }}"
+             data-date="{{ event.event_date.strftime('%Y-%m-%d') }}">
+            <div class="card h-100 shadow">
+                {% if event.image_path %}
+                    <img src="{{ url_for('static', filename=event.image_path) }}" 
+                         class="card-img-top" style="height: 200px; object-fit: cover;" alt="{{ event.title }}">
+                {% else %}
+                    <div class="card-img-top bg-light text-center py-5" style="height: 200px;">
+                        <i class="fas fa-calendar text-muted" style="font-size: 3rem;"></i>
+                    </div>
+                {% endif %}
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <span class="badge bg-{{ 'success' if event.event_date > now else 'secondary' }}">
+                            {{ 'Upcoming' if event.event_date > now else 'Past' }}
+                        </span>
+                        <span class="badge bg-primary">{{ event.category }}</span>
+                    </div>
+                    <h5 class="card-title">{{ event.title }}</h5>
+                    <p class="card-text">{{ event.description[:100] }}{% if event.description|length > 100 %}...{% endif %}</p>
+                    
+                    <div class="mb-3">
+                        <small class="text-muted">
+                            <i class="fas fa-calendar me-1"></i>
+                            {{ event.event_date.strftime('%B %d, %Y at %I:%M %p') }}
+                        </small>
+                    </div>
+                    
+                    {% if event.venue %}
+                    <div class="mb-3">
+                        <small class="text-muted">
+                            <i class="fas fa-map-marker-alt me-1"></i>
+                            {{ event.venue }}
+                        </small>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="card-footer bg-transparent">
+                    <button type="button" class="btn btn-outline-primary btn-sm w-100" 
+                            data-bs-toggle="modal" data-bs-target="#eventModal{{ event.id }}">
+                        <i class="fas fa-info-circle me-1"></i>View Details
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- No Results Message -->
+    <div id="noResults" class="text-center py-5" style="display: none;">
+        <i class="fas fa-calendar-times text-muted" style="font-size: 4rem;"></i>
+        <h4 class="text-muted mt-3">No events found</h4>
+        <p class="text-muted">Try adjusting your search criteria or filters.</p>
+    </div>
+</div>
+
+<!-- Event Detail Modals -->
+{% for event in events %}
+<div class="modal fade" id="eventModal{{ event.id }}" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Event Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        {% if event.image_path %}
+                            <img src="{{ url_for('static', filename=event.image_path) }}" 
+                                 class="img-fluid rounded" alt="{{ event.title }}">
+                        {% else %}
+                            <div class="bg-light text-center py-5 rounded">
+                                <i class="fas fa-calendar text-muted" style="font-size: 4rem;"></i>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <h4>{{ event.title }}</h4>
+                        
+                        <div class="mb-3">
+                            <span class="badge bg-primary me-1">{{ event.category }}</span>
+                            {% if event.is_featured %}
+                                <span class="badge bg-warning">Featured</span>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <strong>Date & Time:</strong><br>
+                            <i class="fas fa-calendar me-1"></i>
+                            {{ event.event_date.strftime('%B %d, %Y at %I:%M %p') }}
+                        </div>
+                        
+                        {% if event.end_date %}
+                        <div class="mb-3">
+                            <strong>End Date:</strong><br>
+                            <i class="fas fa-calendar-check me-1"></i>
+                            {{ event.end_date.strftime('%B %d, %Y at %I:%M %p') }}
+                        </div>
+                        {% endif %}
+                        
+                        {% if event.venue %}
+                        <div class="mb-3">
+                            <strong>Venue:</strong><br>
+                            <i class="fas fa-map-marker-alt me-1"></i>
+                            {{ event.venue }}
+                        </div>
+                        {% endif %}
+                        
+                        {% if event.organizer %}
+                        <div class="mb-3">
+                            <strong>Organizer:</strong><br>
+                            <i class="fas fa-user me-1"></i>
+                            {{ event.organizer }}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                {% if event.description %}
+                <div class="mt-4">
+                    <h6>Description</h6>
+                    <p class="text-muted">{{ event.description }}</p>
+                </div>
+                {% endif %}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">
+                    <i class="fas fa-calendar-plus me-1"></i>Add to Calendar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+<style>
+.featured-event {
+    border: 2px solid #ffc107;
+}
+</style>
+
+<script>
+// Filter functionality
+document.getElementById('categoryFilter').addEventListener('change', filterEvents);
+document.getElementById('dateFilter').addEventListener('change', filterEvents);
+document.getElementById('searchInput').addEventListener('input', filterEvents);
+
+function filterEvents() {
+    const categoryFilter = document.getElementById('categoryFilter').value;
+    const dateFilter = document.getElementById('dateFilter').value;
+    const searchInput = document.getElementById('searchInput').value.toLowerCase();
+    
+    const eventItems = document.querySelectorAll('.event-item');
+    let visibleCount = 0;
+    
+    const today = new Date();
+    const todayStr = today.toISOString().split('T')[0];
+    const weekFromNow = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
+    const monthFromNow = new Date(today.getTime() + 30 * 24 * 60 * 60 * 1000);
+    
+    eventItems.forEach(item => {
+        const category = item.dataset.category;
+        const eventDate = new Date(item.dataset.date);
+        const text = item.textContent.toLowerCase();
+        
+        const matchesCategory = !categoryFilter || category === categoryFilter;
+        const matchesSearch = !searchInput || text.includes(searchInput);
+        
+        let matchesDate = true;
+        if (dateFilter) {
+            switch(dateFilter) {
+                case 'today':
+                    matchesDate = item.dataset.date === todayStr;
+                    break;
+                case 'week':
+                    matchesDate = eventDate >= today && eventDate <= weekFromNow;
+                    break;
+                case 'month':
+                    matchesDate = eventDate >= today && eventDate <= monthFromNow;
+                    break;
+                case 'upcoming':
+                    matchesDate = eventDate >= today;
+                    break;
+                case 'past':
+                    matchesDate = eventDate < today;
+                    break;
+            }
+        }
+        
+        if (matchesCategory && matchesSearch && matchesDate) {
+            item.style.display = 'block';
+            visibleCount++;
+        } else {
+            item.style.display = 'none';
+        }
+    });
+    
+    // Show/hide no results message
+    const noResults = document.getElementById('noResults');
+    if (visibleCount === 0) {
+        noResults.style.display = 'block';
+    } else {
+        noResults.style.display = 'none';
+    }
+}
+</script>
+{% endblock %} 

@@ -1,0 +1,213 @@
+{% extends "base.html" %}
+
+{% block title %}Register User - Admin{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+            <div class="position-sticky pt-3">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('admin_dashboard') }}">
+                            <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('admin_users') }}">
+                            <i class="fas fa-users me-2"></i>Manage Users
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('admin_register') }}">
+                            <i class="fas fa-user-plus me-2"></i>Register User
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Main content -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">Register New User</h1>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="card shadow">
+                        <div class="card-body">
+                            <form method="POST">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="first_name" class="form-label">First Name *</label>
+                                        <input type="text" class="form-control" id="first_name" name="first_name" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="last_name" class="form-label">Last Name *</label>
+                                        <input type="text" class="form-control" id="last_name" name="last_name" required>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="username" class="form-label">Username *</label>
+                                        <input type="text" class="form-control" id="username" name="username" required title="Unique username for login">
+                                        <div class="form-text">Username must be unique.</div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="email" class="form-label">Email *</label>
+                                        <input type="email" class="form-control" id="email" name="email" required title="Valid email address">
+                                        <div class="form-text">Email must be unique and valid.</div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="password" class="form-label">Password *</label>
+                                        <input type="password" class="form-control" id="password" name="password" required minlength="8" title="At least 8 characters, 1 uppercase, 1 lowercase, 1 digit">
+                                        <div class="form-text">Password must be at least 8 characters, include uppercase, lowercase, and a digit.</div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="role" class="form-label">Role *</label>
+                                        <select class="form-select" id="role" name="role" required>
+                                            <option value="">Select Role</option>
+                                            <option value="student">Student</option>
+                                            <option value="faculty">Faculty</option>
+                                            <option value="admin">Admin</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="phone" class="form-label">Phone</label>
+                                        <input type="tel" class="form-control" id="phone" name="phone">
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="gender" class="form-label">Gender</label>
+                                        <select class="form-select" id="gender" name="gender">
+                                            <option value="">Select Gender</option>
+                                            <option value="male">Male</option>
+                                            <option value="female">Female</option>
+                                            <option value="other">Other</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="address" class="form-label">Address</label>
+                                    <textarea class="form-control" id="address" name="address" rows="3"></textarea>
+                                </div>
+
+                                <!-- Student-specific fields -->
+                                <div id="student-fields" style="display: none;">
+                                    <h5 class="mb-3">Student Information</h5>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="course_id" class="form-label">Course *</label>
+                                            <select class="form-select" id="course_id" name="course_id">
+                                                <option value="">Select Course</option>
+                                                {% for course in courses %}
+                                                <option value="{{ course.id }}">{{ course.name }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="semester_id" class="form-label">Semester *</label>
+                                            <select class="form-select" id="semester_id" name="semester_id">
+                                                <option value="">Select Semester</option>
+                                                {% for semester in semesters %}
+                                                <option value="{{ semester.id }}">{{ semester.name }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Faculty-specific fields -->
+                                <div id="faculty-fields" style="display: none;">
+                                    <h5 class="mb-3">Faculty Information</h5>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="department" class="form-label">Department</label>
+                                            <input type="text" class="form-control" id="department" name="department">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="qualification" class="form-label">Qualification</label>
+                                            <input type="text" class="form-control" id="qualification" name="qualification">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                    <a href="{{ url_for('admin_users') }}" class="btn btn-secondary me-md-2">Cancel</a>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-user-plus me-2"></i>Register User
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="card shadow">
+                        <div class="card-header">
+                            <h5 class="mb-0">Registration Guidelines</h5>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-unstyled">
+                                <li class="mb-2">
+                                    <i class="fas fa-info-circle text-info me-2"></i>
+                                    All fields marked with * are required
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-user-graduate text-primary me-2"></i>
+                                    Students will be assigned a unique student ID
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-chalkboard-teacher text-success me-2"></i>
+                                    Faculty will be assigned a unique faculty ID
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-shield-alt text-warning me-2"></i>
+                                    Admin users have full system access
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-envelope text-secondary me-2"></i>
+                                    Email will be used for notifications
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<script>
+document.getElementById('role').addEventListener('change', function() {
+    const studentFields = document.getElementById('student-fields');
+    const facultyFields = document.getElementById('faculty-fields');
+    
+    // Hide all role-specific fields
+    studentFields.style.display = 'none';
+    facultyFields.style.display = 'none';
+    
+    // Show relevant fields based on selected role
+    if (this.value === 'student') {
+        studentFields.style.display = 'block';
+    } else if (this.value === 'faculty') {
+        facultyFields.style.display = 'block';
+    }
+});
+
+const form = document.querySelector('form');
+form.addEventListener('submit', function() {
+    form.querySelector('button[type="submit"]').disabled = true;
+});
+</script>
+{% endblock %} 

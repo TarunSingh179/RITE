@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Receipt - {{ fee.fee_type }}{% endblock %}
+{% block content %}
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card shadow-sm">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">Payment Receipt</h5>
+          <span class="text-muted">{{ (payment.paid_at or fee.paid_date).strftime('%Y-%m-%d %H:%M') if (payment and (payment.paid_at or fee.paid_date)) else '' }}</span>
+        </div>
+        <div class="card-body">
+          <div class="mb-3">
+            <strong>Student:</strong> {{ student.get_full_name() }}<br>
+            <strong>Email:</strong> {{ student.email }}
+          </div>
+          <hr>
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <strong>Fee Type:</strong> {{ fee.fee_type }}
+            </div>
+            <div class="col-md-6">
+              <strong>Receipt No:</strong> {{ (payment.receipt_number if payment else fee.receipt_number) or 'N/A' }}
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-md-4"><strong>Total:</strong> ₹{{ '%.2f'|format(fee.amount or 0) }}</div>
+            <div class="col-md-4"><strong>Paid:</strong> ₹{{ '%.2f'|format(fee.paid_amount or 0) }}</div>
+            <div class="col-md-4"><strong>Balance:</strong> ₹{{ '%.2f'|format((fee.amount or 0) - (fee.paid_amount or 0)) }}</div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-md-6"><strong>Due Date:</strong> {{ fee.due_date.strftime('%Y-%m-%d') }}</div>
+            <div class="col-md-6"><strong>Status:</strong> {{ fee.status|capitalize }}</div>
+          </div>
+          {% if payment %}
+          <div class="row mb-3">
+            <div class="col-md-6"><strong>Method:</strong> {{ payment.method }}</div>
+            <div class="col-md-6"><strong>Transaction ID:</strong> <small class="text-muted">{{ payment.txn_id }}</small></div>
+          </div>
+          {% endif %}
+          {% if fee.remarks %}
+          <div class="alert alert-info small">{{ fee.remarks }}</div>
+          {% endif %}
+        </div>
+        <div class="card-footer d-flex gap-2">
+          <a href="javascript:window.print()" class="btn btn-outline-secondary"><i class="fas fa-print me-1"></i>Print</a>
+          <a href="{{ url_for('student_fees') }}" class="btn btn-primary">Back to Fees</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,198 @@
+{% extends 'base.html' %}
+{% block title %}Fee Configuration{% endblock %}
+{% block content %}
+<div class="container mt-4">
+  <h2>Fee Configuration</h2>
+
+  <div class="row">
+    <div class="col-md-7">
+      <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <span>Fee Structures</span>
+          <button class="btn btn-sm btn-primary" data-bs-toggle="collapse" data-bs-target="#createStructure">New Structure</button>
+        </div>
+        <div id="createStructure" class="collapse card-body">
+          <form method="post" action="{{ url_for('admin_create_fee_structure') }}">
+            <div class="row g-2">
+              <div class="col-md-4">
+                <label class="form-label">Course</label>
+                <select name="course_id" class="form-select">
+                  <option value="">-- Any --</option>
+                  {% for c in courses %}
+                  <option value="{{ c.id }}">{{ c.name }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Semester</label>
+                <select name="semester_id" class="form-select">
+                  <option value="">-- Any --</option>
+                  {% for s in semesters %}
+                  <option value="{{ s.id }}">{{ s.name }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Category</label>
+                <input type="text" name="category" class="form-control" placeholder="General/SC/ST/OBC/EWS" />
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Tuition</label>
+                <input type="number" step="0.01" name="tuition" class="form-control" value="0" />
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Hostel</label>
+                <input type="number" step="0.01" name="hostel" class="form-control" value="0" />
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Transport</label>
+                <input type="number" step="0.01" name="transport" class="form-control" value="0" />
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Exam</label>
+                <input type="number" step="0.01" name="exam" class="form-control" value="0" />
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Misc</label>
+                <input type="number" step="0.01" name="misc" class="form-control" value="0" />
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Late Fee Rule</label>
+                <select name="late_fee_rule_id" class="form-select">
+                  <option value="">-- None --</option>
+                  {% for lr in late_rules %}
+                  <option value="{{ lr.id }}">{{ lr.name }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Effective From</label>
+                <input type="date" name="effective_from" class="form-control" />
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Effective To</label>
+                <input type="date" name="effective_to" class="form-control" />
+              </div>
+              <div class="col-md-4 d-flex align-items-end">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" name="is_active" id="fsActive" checked>
+                  <label class="form-check-label" for="fsActive">Active</label>
+                </div>
+              </div>
+            </div>
+            <div class="mt-3">
+              <button type="submit" class="btn btn-success">Create Structure</button>
+            </div>
+          </form>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-sm table-striped mb-0">
+            <thead>
+              <tr>
+                <th>Course</th>
+                <th>Sem</th>
+                <th>Category</th>
+                <th>Total</th>
+                <th>Active</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for fs in fee_structures %}
+              <tr>
+                <td>{{ fs.course_id }}</td>
+                <td>{{ fs.semester_id }}</td>
+                <td>{{ fs.category or '-' }}</td>
+                <td>{{ (fs.tuition or 0) + (fs.hostel or 0) + (fs.transport or 0) + (fs.exam or 0) + (fs.misc or 0) }}</td>
+                <td>{{ 'Yes' if fs.is_active else 'No' }}</td>
+                <td>
+                  <form method="post" action="{{ url_for('admin_delete_fee_structure', fs_id=fs.id) }}" onsubmit="return confirm('Delete this structure?')">
+                    <button class="btn btn-sm btn-outline-danger">Delete</button>
+                  </form>
+                </td>
+              </tr>
+              {% else %}
+              <tr><td colspan="6" class="text-center">No fee structures found.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-5">
+      <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <span>Late Fee Rules</span>
+          <button class="btn btn-sm btn-primary" data-bs-toggle="collapse" data-bs-target="#createLateRule">New Rule</button>
+        </div>
+        <div id="createLateRule" class="collapse card-body">
+          <form method="post" action="{{ url_for('admin_create_late_rule') }}">
+            <div class="row g-2">
+              <div class="col-12">
+                <label class="form-label">Name</label>
+                <input type="text" required name="name" class="form-control" />
+              </div>
+              <div class="col-12">
+                <label class="form-label">Rule Type</label>
+                <select name="rule_type" class="form-select">
+                  <option value="fixed_per_day">Fixed per day</option>
+                  <option value="percent_per_day">Percent per day</option>
+                  <option value="slabbed">Slabbed (JSON)</option>
+                </select>
+              </div>
+              <div class="col-6">
+                <label class="form-label">Grace Days</label>
+                <input type="number" name="grace_days" class="form-control" value="0" />
+              </div>
+              <div class="col-6">
+                <label class="form-label">Per-day Amount</label>
+                <input type="number" step="0.01" name="per_day_amount" class="form-control" value="0" />
+              </div>
+              <div class="col-6">
+                <label class="form-label">Per-day Percent</label>
+                <input type="number" step="0.01" name="per_day_percent" class="form-control" value="0" />
+              </div>
+              <div class="col-12">
+                <label class="form-label">Slabs (JSON)</label>
+                <textarea name="slabs" class="form-control" rows="3" placeholder='[{"from":1,"to":10,"amount":10}, {"from":11,"to":30,"amount":20}]'></textarea>
+              </div>
+            </div>
+            <div class="mt-3">
+              <button type="submit" class="btn btn-success">Create Rule</button>
+            </div>
+          </form>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-sm table-striped mb-0">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Grace</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for lr in late_rules %}
+              <tr>
+                <td>{{ lr.name }}</td>
+                <td>{{ lr.rule_type }}</td>
+                <td>{{ lr.grace_days }}</td>
+                <td>
+                  <form method="post" action="{{ url_for('admin_delete_late_rule', lr_id=lr.id) }}" onsubmit="return confirm('Delete this rule?')">
+                    <button class="btn btn-sm btn-outline-danger">Delete</button>
+                  </form>
+                </td>
+              </tr>
+              {% else %}
+              <tr><td colspan="4" class="text-center">No late fee rules found.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

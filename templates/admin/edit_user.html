@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% block title %}Edit User - RITE{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Edit User</h2>
+    <form method="POST">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label for="username" class="form-label">Username</label>
+                    <input type="text" class="form-control" id="username" name="username" value="{{ user.username }}" required title="Unique username for login">
+                    <div class="form-text">Username must be unique.</div>
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}" required title="Valid email address">
+                    <div class="form-text">Email must be unique and valid.</div>
+                </div>
+                <div class="mb-3">
+                    <label for="first_name" class="form-label">First Name</label>
+                    <input type="text" class="form-control" id="first_name" name="first_name" value="{{ user.first_name }}" required>
+                </div>
+                <div class="mb-3">
+                    <label for="last_name" class="form-label">Last Name</label>
+                    <input type="text" class="form-control" id="last_name" name="last_name" value="{{ user.last_name }}" required>
+                </div>
+                <div class="mb-3">
+                    <label for="role" class="form-label">Role</label>
+                    <select class="form-select" id="role" name="role" required>
+                        <option value="student" {% if user.role == 'student' %}selected{% endif %}>Student</option>
+                        <option value="faculty" {% if user.role == 'faculty' %}selected{% endif %}>Faculty</option>
+                        <option value="admin" {% if user.role == 'admin' %}selected{% endif %}>Admin</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div id="student-fields" {% if user.role != 'student' %}style="display:none;"{% endif %}>
+                    <div class="mb-3">
+                        <label for="course_id" class="form-label">Course</label>
+                        <select class="form-select" id="course_id" name="course_id">
+                            <option value="">Select Course</option>
+                            {% for course in courses %}
+                                <option value="{{ course.id }}" {% if user.course_id == course.id %}selected{% endif %}>{{ course.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="semester_id" class="form-label">Semester</label>
+                        <select class="form-select" id="semester_id" name="semester_id">
+                            <option value="">Select Semester</option>
+                            {% for semester in semesters %}
+                                <option value="{{ semester.id }}" {% if user.semester_id == semester.id %}selected{% endif %}>{{ semester.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div id="faculty-fields" {% if user.role != 'faculty' %}style="display:none;"{% endif %}>
+                    <div class="mb-3">
+                        <label for="department" class="form-label">Department</label>
+                        <input type="text" class="form-control" id="department" name="department" value="{{ user.department or '' }}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="qualification" class="form-label">Qualification</label>
+                        <input type="text" class="form-control" id="qualification" name="qualification" value="{{ user.qualification or '' }}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="experience_years" class="form-label">Experience (years)</label>
+                        <input type="number" class="form-control" id="experience_years" name="experience_years" value="{{ user.experience_years or '' }}">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-success">Save Changes</button>
+        <a href="{{ url_for('admin_users') }}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+<script>
+// Show/hide fields based on role
+const roleSelect = document.getElementById('role');
+const studentFields = document.getElementById('student-fields');
+const facultyFields = document.getElementById('faculty-fields');
+roleSelect.addEventListener('change', function() {
+    if (this.value === 'student') {
+        studentFields.style.display = '';
+        facultyFields.style.display = 'none';
+    } else if (this.value === 'faculty') {
+        studentFields.style.display = 'none';
+        facultyFields.style.display = '';
+    } else {
+        studentFields.style.display = 'none';
+        facultyFields.style.display = 'none';
+    }
+});
+
+const form = document.querySelector('form');
+form.addEventListener('submit', function() {
+    form.querySelector('button[type="submit"]').disabled = true;
+});
+</script>
+{% endblock %}

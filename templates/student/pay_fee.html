@@ -1,0 +1,328 @@
+{% extends "base.html" %}
+
+{% block title %}Pay Fee - Student{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-credit-card me-2"></i>Fee Payment
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <!-- Fee Information -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="card border-primary">
+                                <div class="card-header">
+                                    <h6 class="mb-0">Fee Details</h6>
+                                </div>
+                                <div class="card-body">
+                                    <table class="table table-sm">
+                                        <tr>
+                                            <td><strong>Fee Type:</strong></td>
+                                            <td>{{ fee.fee_type }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Total Amount:</strong></td>
+                                            <td>₹{{ "%.2f"|format(fee.amount) }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Paid Amount:</strong></td>
+                                            <td>₹{{ "%.2f"|format(fee.paid_amount) }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Balance:</strong></td>
+                                            <td class="text-danger">₹{{ "%.2f"|format(fee.get_balance()) }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Due Date:</strong></td>
+                                            <td class="{% if fee.is_overdue() %}text-danger{% endif %}">
+                                                {{ fee.due_date.strftime('%B %d, %Y') }}
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card border-success">
+                                <div class="card-header">
+                                    <h6 class="mb-0">Payment Progress</h6>
+                                </div>
+                                <div class="card-body">
+                                    {% set progress = (fee.paid_amount / fee.amount * 100) if fee.amount > 0 else 0 %}
+                                    <div class="mb-3">
+                                        <div class="d-flex justify-content-between mb-1">
+                                            <span>Payment Progress</span>
+                                            <span>{{ "%.1f"|format(progress) }}%</span>
+                                        </div>
+                                        <div class="progress" style="height: 20px;">
+                                            <div class="progress-bar bg-success" style="width: '{{ progress }}%'">
+                                                ₹{{ "%.2f"|format(fee.paid_amount) }} / ₹{{ "%.2f"|format(fee.amount) }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    {% if fee.is_overdue() %}
+                                    <div class="alert alert-danger">
+                                        <i class="fas fa-exclamation-triangle me-2"></i>
+                                        This fee is overdue! Please pay immediately to avoid any penalties.
+                                    </div>
+                                    {% endif %}
+                                    
+                                    {% if fee.paid_amount > 0 %}
+                                    <div class="alert alert-info">
+                                        <i class="fas fa-info-circle me-2"></i>
+                                        You have already paid ₹{{ "%.2f"|format(fee.paid_amount) }} towards this fee.
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Payment Form -->
+                    <form method="POST">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="amount" class="form-label">Payment Amount *</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">₹</span>
+                                    <input type="number" class="form-control" id="amount" name="amount" 
+                                           step="0.01" min="0.01" max="{{ fee.get_balance() }}" 
+                                           value="{{ fee.get_balance() }}" required>
+                                </div>
+                                <div class="form-text">
+                                    Maximum amount you can pay: ₹{{ "%.2f"|format(fee.get_balance()) }}
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="payment_method" class="form-label">Payment Method *</label>
+                                <select class="form-select" id="payment_method" name="payment_method" required>
+                                    <option value="">Select Payment Method</option>
+                                    <option value="credit_card">Credit Card</option>
+                                    <option value="debit_card">Debit Card</option>
+                                    <option value="bank_transfer">Bank Transfer</option>
+                                    <option value="cash">Cash</option>
+                                    <option value="check">Check</option>
+                                    <option value="online">Online Payment</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Payment Method Details -->
+                        <div id="cardDetails" class="row" style="display: none;">
+                            <div class="col-md-6 mb-3">
+                                <label for="card_number" class="form-label">Card Number</label>
+                                <input type="text" class="form-control" id="card_number" 
+                                       placeholder="1234 5678 9012 3456" maxlength="19">
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label for="expiry" class="form-label">Expiry Date</label>
+                                <input type="text" class="form-control" id="expiry" 
+                                       placeholder="MM/YY" maxlength="5">
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label for="cvv" class="form-label">CVV</label>
+                                <input type="text" class="form-control" id="cvv" 
+                                       placeholder="123" maxlength="4">
+                            </div>
+                        </div>
+
+                        <div id="bankDetails" class="row" style="display: none;">
+                            <div class="col-md-6 mb-3">
+                                <label for="account_number" class="form-label">Account Number</label>
+                                <input type="text" class="form-control" id="account_number" 
+                                       placeholder="Enter account number">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="routing_number" class="form-label">Routing Number</label>
+                                <input type="text" class="form-control" id="routing_number" 
+                                       placeholder="Enter routing number">
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="notes" class="form-label">Payment Notes (Optional)</label>
+                            <textarea class="form-control" id="notes" name="notes" rows="3" 
+                                      placeholder="Any additional notes about this payment..."></textarea>
+                        </div>
+
+                        <!-- Terms and Conditions -->
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="terms" required>
+                                <label class="form-check-label" for="terms">
+                                    I agree to the <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">Terms and Conditions</a> 
+                                    and confirm that the payment information provided is accurate.
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{{ url_for('student_fees') }}" class="btn btn-secondary me-md-2">
+                                <i class="fas fa-arrow-left me-1"></i>Back to Fees
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-credit-card me-1"></i>Process Payment
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Payment Security Notice -->
+            <div class="card mt-4">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h6><i class="fas fa-shield-alt text-success me-2"></i>Secure Payment</h6>
+                            <p class="text-muted mb-0">
+                                Your payment information is encrypted and secure. We use industry-standard 
+                                SSL encryption to protect your data during transmission.
+                            </p>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <i class="fas fa-lock text-success" style="font-size: 2rem;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Terms and Conditions Modal -->
+<div class="modal fade" id="termsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Terms and Conditions</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <h6>Payment Terms and Conditions</h6>
+                <ol>
+                    <li>All payments are processed securely through our payment gateway.</li>
+                    <li>Payment confirmation will be sent to your registered email address.</li>
+                    <li>Refunds are subject to institutional policies and may take 5-7 business days.</li>
+                    <li>Late payments may incur additional fees as per institutional policy.</li>
+                    <li>Payment receipts will be available for download after successful payment.</li>
+                    <li>For any payment-related issues, please contact the finance department.</li>
+                </ol>
+                
+                <h6>Privacy Policy</h6>
+                <p>Your payment information is collected solely for processing your fee payment and will not be shared with third parties except as required by law or for payment processing purposes.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Show/hide payment method details based on selection
+document.getElementById('payment_method').addEventListener('change', function() {
+    const cardDetails = document.getElementById('cardDetails');
+    const bankDetails = document.getElementById('bankDetails');
+    
+    // Hide all details first
+    cardDetails.style.display = 'none';
+    bankDetails.style.display = 'none';
+    
+    // Show relevant details based on selection
+    if (this.value === 'credit_card' || this.value === 'debit_card') {
+        cardDetails.style.display = 'block';
+    } else if (this.value === 'bank_transfer') {
+        bankDetails.style.display = 'block';
+    }
+});
+
+// Format card number with spaces
+document.getElementById('card_number').addEventListener('input', function() {
+    let value = this.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+    let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
+    this.value = formattedValue;
+});
+
+// Format expiry date
+document.getElementById('expiry').addEventListener('input', function() {
+    let value = this.value.replace(/\D/g, '');
+    if (value.length >= 2) {
+        value = value.substring(0, 2) + '/' + value.substring(2, 4);
+    }
+    this.value = value;
+});
+
+// Validate amount
+document.getElementById('amount').addEventListener('input', function() {
+    const maxAmount = parseFloat("{{ fee.get_balance|floatformat:2|default:'0' }}") || 0;
+    const inputAmount = parseFloat(this.value);
+    
+    if (inputAmount > maxAmount) {
+        this.value = maxAmount;
+        alert('Payment amount cannot exceed the remaining balance.');
+    }
+    
+    if (inputAmount <= 0) {
+        this.value = '';
+        alert('Payment amount must be greater than zero.');
+    }
+});
+
+// Form validation
+document.querySelector('form').addEventListener('submit', function(e) {
+    const amount = parseFloat(document.getElementById('amount').value);
+    const paymentMethod = document.getElementById('payment_method').value;
+    const terms = document.getElementById('terms').checked;
+    
+    if (!amount || amount <= 0) {
+        e.preventDefault();
+        alert('Please enter a valid payment amount.');
+        return;
+    }
+    
+    if (!paymentMethod) {
+        e.preventDefault();
+        alert('Please select a payment method.');
+        return;
+    }
+    
+    if (!terms) {
+        e.preventDefault();
+        alert('Please agree to the terms and conditions.');
+        return;
+    }
+    
+    // Additional validation for card payments
+    if (paymentMethod === 'credit_card' || paymentMethod === 'debit_card') {
+        const cardNumber = document.getElementById('card_number').value.replace(/\s/g, '');
+        const expiry = document.getElementById('expiry').value;
+        const cvv = document.getElementById('cvv').value;
+        
+        if (cardNumber.length < 13 || cardNumber.length > 19) {
+            e.preventDefault();
+            alert('Please enter a valid card number.');
+            return;
+        }
+        
+        if (!expiry || expiry.length !== 5) {
+            e.preventDefault();
+            alert('Please enter a valid expiry date (MM/YY).');
+            return;
+        }
+        
+        if (!cvv || cvv.length < 3 || cvv.length > 4) {
+            e.preventDefault();
+            alert('Please enter a valid CVV.');
+            return;
+        }
+    }
+});
+</script>
+{% endblock %} 

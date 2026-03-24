@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Theory of Computation Assignment Solutions</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .question {
+            background: white;
+            padding: 25px;
+            margin: 20px 0;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 15px;
+        }
+        h2 {
+            color: #3498db;
+            border-left: 4px solid #3498db;
+            padding-left: 15px;
+            margin-top: 0;
+        }
+        h3 {
+            color: #2980b9;
+            margin-top: 20px;
+        }
+        .diagram {
+            margin: 30px auto;
+            text-align: center;
+        }
+        svg {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: white;
+            max-width: 100%;
+            height: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+        }
+        th {
+            background: #3498db;
+            color: white;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+        .note {
+            background: #e8f4f8;
+            padding: 15px;
+            border-left: 4px solid #3498db;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        .proof {
+            background: #fff9e6;
+            padding: 15px;
+            border-left: 4px solid #f39c12;
+            margin: 15px 0;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+        }
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+        .legend {
+            display: inline-block;
+            margin: 10px 20px;
+            font-size: 14px;
+        }
+        .legend-item {
+            display: inline-block;
+            margin-right: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Theory of Computation Assignment Solutions</h1>
+
+    <!-- Q1 -->
+    <div class="question">
+        <h2>Q1. DFA for strings ending with '0' over Σ = {0,1}</h2>
+        
+        <div class="diagram">
+            <svg width="500" height="250" viewBox="0 0 500 250">
+                <!-- Arrow to initial state -->
+                <defs>
+                    <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                        <polygon points="0 0, 10 3, 0 6" fill="#333" />
+                    </marker>
+                </defs>
+                
+                <!-- Initial arrow -->
+                <line x1="50" y1="125" x2="90" y2="125" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+                <text x="30" y="115" font-size="14" fill="#333">Start</text>
+                
+                <!-- State q0 (double circle - final state) -->
+                <circle cx="130" cy="125" r="35" fill="none" stroke="#2ecc71" stroke-width="3"/>
+                <circle cx="130" cy="125" r="30" fill="none" stroke="#2ecc71" stroke-width="2"/>
+                <text x="115" y="132" font-size="18" font-weight="bold" fill="#333">q0</text>
+                
+                <!-- State q1 -->
+                <circle cx="350" cy="125" r="35" fill="none" stroke="#e74c3c" stroke-width="3"/>
+                <text x="335" y="132" font-size="18" font-weight="bold" fill="#333">q1</text>
+                
+                <!-- Self loop on q0 with label 0 -->
+                <path d="M 130 90 Q 130 50 130 90" fill="none" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+                <text x="125" y="40" font-size="16" font-weight="bold" fill="#2ecc71">0</text>
+                
+                <!-- Transition q0 to q1 with label 1 -->
+                <line x1="165" y1="125" x2="315" y2="125" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+                <text x="230" y="115" font-size="16" font-weight="bold" fill="#333">1</text>
+                
+                <!-- Transition q1 to q0 with label 0 -->
+                <path d="M 350 160 Q 240 180 130 160" fill="none" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+                <text x="230" y="195" font-size="16" font-weight="bold" fill="#2ecc71">0</text>
+                
+                <!-- Self loop on q1 with label 1 -->
+                <path d="M 385 125 Q 420 125 385 125" fill="none" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+                <text x="425" y="132" font-size="16" font-weight="bold" fill="#333">1</text>
+            </svg>
+            
+            <div class="legend">
+                <span class="legend-item">🟢 q0: Final State (strings ending in 0)</span>
+                <span class="legend-item">🔴 q1: Non-final State (strings ending in 1)</span>
+            </div>
+        </div>
+
+        <h3>Transition Table</h3>
+        <table>
+            <tr>
+                <th>State</th>
+                <th>Input: 0</th>
+                <th>Input: 1</th>
+                <th>Final State?</th>
+            </tr>
+            <tr>
+                <td><strong>q0</strong></td>
+                <td>q0</td>
+                <td>q1</td>
+                <td>✓ Yes</td>
+            </tr>
+            <tr>
+                <td><strong>q1</strong></td>
+                <td>q0</td>
+                <td>q1</td>
+                <td>✗ No</td>
+            </tr>
+        </table>
+
+        <div class="note">
+            <strong>Working:</strong> The DFA starts at q0 (accepting state). Reading '0' keeps it at q0, while '1' moves to q1. Any string ending in '0' will be accepted.
+        </div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="question">
+        <h2>Q2. NFA for strings ending in "01"</h2>
+        
+        <div class="diagram">
+            <svg width="600" height="300" viewBox="0 0 600 300">
+                <!-- Initial arrow -->
+                <line x1="40" y1="150" x2="85" y2="150" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+                <text x="20" y="140" font-size="14" fill="#333">Start</text>
+                
+                <!-- State q0 -->
+                <circle cx="120" cy="150" r="35" fill="none" stroke="#3498db" stroke-width="3"/>
+                <text x="105" y="157" font-size="18" font-weight="bold" fill="#333">q0</text>
+                
+                <!-- State q1 -->
+                <circle cx="300" cy="150" r="35" fill="none" stroke="#3498db" stroke-width="3"/>
+                <text x="285" y="157" font-size="18" font-weight="bold" fill="#333">q1</text>
+                
+                <!-- State q2 (final) -->
+                <circle cx="480" cy="150" r="35" fill="none" stroke="#2ecc71" stroke-width="3"/>
+                <circle cx="480" cy="150" r="30" fill="none" stroke="#2ecc71" stroke-width="2"/>
+                <text x="465" y="157" font-size="18" font-weight="bold" fill="#333">q2</text>
+                
+                <!-- Self loop on q0 with 0 (top) -->
+                <path d="M 120 115 Q 120 80 120 115" fill="none" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+                <text x="110" y="70" font-size="16" font-weight="bold" fill="#333">0</text>
+                
+                <!-- Self loop on q0 with 1 (bottom) -->
+                <path d="M 120 185 Q 120 220 120 185" fill="none" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+                <text x="110" y="240" font-size="16" font-weight="bold" fill="#333">1</text>
+                
+                <!-- q0 to q1 with 0 -->
+                <line x1="155" y1="150" x2="265" y2="150" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+                <text x="200" y="140" font-size="16" font-weight="bold" fill="#e74c3c">0</text>
+                
+                <!-- q1 to q2 with 1 -->
+                <line x1="335" y1="150" x2="445" y2="150" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+                <text x="380" y="140" font-size="16" font-weight="bold" fill="#2ecc71">1</text>
+            </svg>
+            
+            <div class="legend">
+                <span class="legend-item">🔵 q0, q1: Non-final States</span>
+                <span class="legend-item">🟢 q2: Final State (accepts strings ending in "01")</span>
+            </div>
+        </div>
+
+        <h3>NFA Transition Table</h3>
+        <table>
+            <tr>
+                <th>State</th>
+                <th>Input: 0</th>
+                <th>Input: 1</th>
+            </tr>
+            <tr>
+                <td><strong>q0</strong></td>
+                <td>{q0, q1}</td>
+                <td>{q0}</td>
+            </tr>
+            <tr>
+                <td><strong>q1</strong></td>
+                <td>∅</td>
+                <td>{q2}</td>
+            </tr>
+            <tr>
+                <td><strong>q2</strong></td>
+                <td>∅</td>
+                <td>∅</td>
+            </tr>
+        </table>
+
+        <div class="note">
+            <strong>Working:</strong> The NFA non-deterministically guesses when the final "01" sequence begins. From q0, on input '0', it can stay at q0 or move to q1. From q1, input '1' leads to final state q2.
+        </div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="question">
+        <h2>Q3. NFA to DFA Conversion (2nd last bit is 1)</h2>
+        
+        <h3>Original NFA</h3>
+        <div class="diagram">
+            <svg width="600" height="250" viewBox="0 0 600 250">
+                <!-- Initial arrow -->
+                <line x1="40" y1="125" x2="85" y2="125" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+                <text x="20" y="115" font-size="14" fill="#333">Start</text>
+                
+                <!-- State q0 -->
+                <circle cx="120" cy="125" r="35" fill="none" stroke="#3498db" stroke-width="3"/>
+                <text x="105" y="132" font-size="18" font-weight="bold" fill="#333">q0</text>
+                
+                <!-- State q1 -->
+                <circle cx="300" cy="125" r="35" fill="none" stroke="#3498db" stroke-width="3"/>
+                <text x="285" y="132" font-size="18" font-weight="bold" fill="#333">q1</text>
+                
+                <!-- State q2 (final) -->
+                <circle cx="480" cy="125" r="35" fill="none" stroke="#2ecc71" stroke-width="3"/>
+                <circle cx="480" cy="125" r="30" fill="none" stroke="#2ecc71" stroke-width="2"/>
+                <text x="465" y="132" font-size="18" font-weight="bold" fill="#333">q2</text>
+                
+                <!-- Self loop on q0 with 0 -->
+                <path d="M 120 90 Q 120 55 120 90" fill="none" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+                <text x="110" y="45" font-size="16" font-weight="bold" fill="#333">0</text>
+                
+                <!-- Self loop on q0 with 1 (curved down) -->
+                <path d="M 120 160 Q 120 195 120 160" fill="none" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+                <text x="110" y="210" font-size="16" font-weight="bold" fill="#e74c3c">1</text>
+                
+                <!-- q0 to q1 with 1 -->
+                <line x1="155" y1="125" x2="265" y2="125" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+                <text x="200" y="115" font-size="16" font-weight="bold" fill="#e74c3c">1</text>
+                
+                <!-- q1 to q2 with 0 (top curve) -->
+                <path d="M 335 125 Q 380 80 425 100" fill="none" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+                <text x="375" y="75" font-size="16" font-weight="bold" fill="#333">0</text>
+                
+                <!-- q1 to q2 with 1 (bottom curve) -->
+                <path d="M 335 125 Q 380 170 425 150" fill="none" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+                <text x="375" y="180" font-size="16" font-weight="bold" fill="#333">1</text>
+            </svg>
+        </div>
+
+        <h3>NFA Transition Table</h3>
+        <table>
+            <tr>
+                <th>State</th>
+                <th>Input: 0</th>
+                <th>Input: 1</th>
+                <th>Final?</th>
+            </tr>
+            <tr>
+                <td><strong>q0</strong></td>
+                <td>{q0}</td>
+                <td>{q0, q1}</td>
+                <td>No</td>
+            </tr>
+            <tr>
+                <td><strong>q1</strong></td>
+                <td>{q2}</td>
+                <td>{q2}</td>
+                <td>No</td>
+            </tr>
+            <tr>
+                <td><strong>q2</strong></td>
+                <td>∅</td>
+                <td>∅</td>
+                <td>✓ Yes</td>
+            </tr>
+        </table>
+
+        <h3>Converted DFA</h3>
+        <div class="diagram">
+            <svg width="700" height="400" viewBox="0 0 700 400">
+                <!-- Initial arrow -->
+                <line x1="30" y1="100" x2="75" y2="100" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+                <text x="10" y="90" font-size="14" fill="#333">Start</text>
+                
+                <!-- State A = {q0} -->
+                <circle cx="110" cy="100" r="35" fill="none" stroke="#e74c3c" stroke-width="3"/>
+                <text x="95" y="107" font-size="18" font-weight="bold" fill="#333">A</text>
+                
+                <!-- State B = {q0,q1} -->
+                <circle cx="350" cy="100" r="35" fill="none" stroke="#e74c3c" stroke-width="3"/>
+                <text x="335" y="107" font-size="18" font-weight="bold" fill="#333">B</text>
+                
+                <!-- State C = {q0,q2} (final) -->
+                <circle cx="110" cy="300" r="35" fill="none" stroke="#2ecc71" stroke-width="3"/>
+                <circle cx="110" cy="300" r="30" fill="none" stroke="#2ecc71" stroke-width="2"/>
+                <text x="95" y="307" font-size="18" font-weight="bold" fill="#333">C</text>
+                
+                <!-- State D = {q0,q1,q2} (final) -->
+                <circle cx="350" cy="300" r="35" fill="none" stroke="#2ecc71" stroke-width="3"/>
+                <circle cx="350" cy="300" r="30" fill="none" stroke="#2ecc71" stroke-width="2"/>
+                <text x="335" y="307" font-size="18" font-weight="bold" fill="#333">D</text>
+                
+                <!-- A to A (self loop 0) -->
+                <path d="M 110 65 Q 110 30 110 65" fill="none" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+                <text x="100" y="20" font-size="16" font-weight="bold" fill="#333">0</text>
+                
+                <!-- A to B (1) -->
+                <line x1="145" y1="100" x2="315" y2="100" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+                <text x="220" y="90" font-size="16" font-weight="bold" fill="#e74c3c">1</text>
+                
+                <!-- B to C (0) -->
+                <path d="M 330 120 Q 230 210 130 285" fill="none" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+                <text x="215" y="200" font-size="16" font-weight="bold" fill="#2ecc71">0</text>
+                
+                <!-- B to D (1) -->
+                <line x1="350" y1="135" x2="350" y2="265" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+                <text x="360" y="210" font-size="16" font-weight="bold" fill="#2ecc71">1</text>
+                
+                <!-- C to A (0) -->
+                <line x1="110" y1="265" x2="110" y2="135" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+                <text x="90" y="210" font-size="16" font-weight="bold" fill="#333">0</text>
+                
+                <!-- C to B (1) -->
+                <path d="M 130 285 Q 230 210 330 120" fill="none" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+                <text x="245" y="230" font-size="16" font-weight="bold" fill="#e74c3c">1</text>
+                
+                <!-- D to C (0) -->
+                <line x1="330" y1="285" x2="145" y2="300" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+                <text x="220" y="305" font-size="16" font-weight="bold" fill="#2ecc71">0</text>
+                
+                <!-- D to D (self loop 1) -->
+                <path d="M 385 300 Q 420 300 385 300" fill="none" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+                <text x="425" y="307" font-size="16" font-weight="bold" fill="#2ecc71">1</text>
+            </svg>
+            
+            <div class="legend">
+                <span class="legend-item">🔴 A, B: Non-final States</span>
+                <span class="legend-item">🟢 C, D: Final States (2nd last bit is 1)</span>
+            </div>
+        </div>
+
+        <h3>DFA Transition Table</h3>
+        <table>
+            <tr>
+                <th>DFA State</th>
+                <th>NFA States</th>
+                <th>Input: 0</th>
+                <th>Input: 1</th>
+                <th>Final?</th>
+            </tr>
+            <tr>
+                <td><strong>A</strong></td>
+                <td>{q0}</td>
+                <td>A</td>
+                <td>B</td>
+                <td>No</td>
+            </tr>
+            <tr>
+                <td><strong>B</strong></td>
+                <td>{q0, q1}</td>
+                <td>C</td>
+                <td>D</td>
+                <td>No</td>
+            </tr>
+            <tr>
+                <td><strong>C</strong></td>
+                <td>{q0, q2}</td>
+                <td>A</td>
+                <td>B</td>
+                <td>✓ Yes</td>
+            </tr>
+            <tr>
+                <td><strong>D</strong></td>
+                <td>{q0, q1, q2}</td>
+                <td>C</td>
+                <td>D</td>
+                <td>✓ Yes</td>
+            </tr>
+        </table>
+
+        <div class="note">
+            <strong>Example traces:</strong> "10" → A→B→C (accepted), "11" → A→B→D (accepted), "110" → A→B→D→C (accepted)
+        </div>
+    </div>
+
+    <!-- Q4 -->
+    <div class="question">
+        <h2>Q4. Regular Grammar</h2>
+        
+        <h3>Definition</h3>
+        <p>A <strong>Regular Grammar</strong> is a formal grammar (G = (V, Σ, P, S)) that generates regular languages. It is a Type-3 grammar in the Chomsky hierarchy and can be processed by finite automata.</p>
+
+        <h3>Four Types of Regular Grammar</h3>
+
+        <h4>1. Right Linear Grammar (Right Regular Grammar)</h4>
+        <p><strong>Production Rules:</strong></p>
+        <ul>
+            <li>A → aB (non-terminal followed by terminal and non-terminal)</li>
+            <li>A → a (non-terminal to terminal)</li>
+            <li>A → ε (non-terminal to empty string)</li>
+        </ul>
+        <div class="note">
+            <strong>Example:</strong><br>
+            S → aS | bA | ε<br>
+            A → aA | b<br><br>
+            This generates strings like: ε, b, ab, aab, aaab, bb, abb, etc.
+        </div>
+
+        <h4>2. Left Linear Grammar (Left Regular Grammar)</h4>
+        <p><strong>Production Rules:</strong></p>
+        <ul>
+            <li>A → Ba (non-terminal and terminal following non-terminal)</li>
+            <li>A → a (non-terminal to terminal)</li>
+            <li>A → ε (non-terminal to empty string)</li>
+        </ul>
+        <div class="note">
+            <strong>Example:</strong><br>
+            S → Sa | Ab | ε<br>
+            A → Aa | b<br><br>
+            This generates strings like: ε, b, ba, baa, baaa, bb, bba, etc.
+        </div>
+
+        <h4>3. Strictly Right Linear Grammar</h4>
+        <p><strong>Production Rules:</strong></p>
+        <ul>
+            <li>A → aB (must have non-terminal on right)</li>
+            <li>S → ε (only start symbol can produce ε)</li>
+        </ul>
+        <div class="note">
+            <strong>Example:</strong><br>
+            S → aA | bB | ε<br>
+            A → aA | bB<br>
+            B → aA | bB<br><br>
+            More restrictive than right linear grammar.
+        </div>
+
+        <h4>4. Strictly Left Linear Grammar</h4>
+        <p><strong>Production Rules:</strong></p>
+        <ul>
+            <li>A → Ba (must have non-terminal on left)</li>
+            <li>S → ε (only start symbol can produce ε)</li>
+        </ul>
+        <div class="note">
+            <strong>Example:</strong><br>
+            S → Aa | Bb | ε<br>
+            A → Aa | Bb<br>
+            B → Aa | Bb<br><br>
+            More restrictive than left linear grammar.
+        </div>
+
+        <h3>Key Properties</h3>
+        <table>
+            <tr>
+                <th>Property</th>
+                <th>Description</th>
+            </tr>
+            <tr>
+                <td>Language Class</td>
+                <td>Generates Regular Languages only</td>
+            </tr>
+            <tr>
+                <td>Automaton Equivalent</td>
+                <td>Finite Automata (DFA/NFA)</td>
+            </tr>
+            <tr>
+                <td>Chomsky Hierarchy</td>
+                <td>Type-3 Grammar</td>
+            </tr>
+            <tr>
+                <td>Closure Properties</td>
+                <td>Closed under union, concatenation, Kleene star</td>
+            </tr>
+            <tr>
+                <td>Limitations</td>
+                <td>Cannot handle nested structures or counting</td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Q5 -->
+    <div class="question">
+        <h2>Q5. Arden's Theorem Proof</h2>
+        
+        <h3>Theorem Statement</h3>
+        <p>Let P and Q be two regular expressions over alphabet Σ. If P does not contain ε (empty string), then the equation:</p>
+        <div class="proof" style="text-align: center; font-size: 18px; padding: 20px;">
+            <strong>R = Q + RP</strong>
+        </div>
+        <p>has a <strong>unique solution</strong>:</p>
+        <div class="proof" style="text-align: center; font-size: 18px; padding: 20px;">
+            <strong>R = QP*</strong>
+        </div>
+        <p>where P* = ε + P + PP + PPP + ... (zero or more concatenations of P)</p>
+
+        <h3>Proof</h3>
+
+        <h4>Part 1: Show R = QP* is a solution</h4>
+        <div class="proof">
+Substitute R = QP* into R = Q + RP:
+
+LHS = R = QP*
+
+RHS = Q + RP
+    = Q + (QP*)P
+    = Q + Q(P*P)
+    = Q + QP⁺        [where P⁺ = PP*]
+    = Q(ε + P⁺)
+    = Q(ε + P + PP + PPP + ...)
+    = QP*
+
+Therefore: LHS = RHS
+Hence, R = QP* satisfies the equation. ✓
+        </div>
+
+        <h4>Part 2: Prove Uniqueness</h4>
+        <p>Assume there exists another solution R' such that R' = Q + R'P</p>
+        <div class="proof">
+Repeatedly substitute R' on the right side:
+
+Iteration 0:
+R' = Q + R'P
+
+Iteration 1:
+R' = Q + (Q + R'P)P
+   = Q + QP + R'P²
+
+Iteration 2:
+R' = Q + QP + (Q + R'P)P²
+   = Q + QP + QP² + R'P³
+
+Iteration n:
+R' = Q + QP + QP² + ... + QP^n + R'P^(n+1)
+   = Q(ε + P + P² + ... + P^n) + R'P^(n+1)
+
+As n → ∞:
+Since P does not contain ε, |P| ≥ 1
+Therefore, P^(n+1) generates strings of length ≥ n+1
+As n → ∞, R'P^(n+1) → ∅ (vanishes)
+
+Therefore:
+R' = Q(ε + P + P² + P³ + ...)
+   = QP*
+        </div>
+
+        <h4>Conclusion</h4>
+        <div class="note">
+            <strong>Since any solution R' must equal QP*, the solution is UNIQUE.</strong><br><br>
+            <strong>Hence Proved:</strong> R = Q + RP has unique solution R = QP* when P doesn't contain ε
+        </div>
+
+        <h3>Important Condition</h3>
+        <div class="note" style="background: #ffe6e6; border-left-color: #e74c3c;">
+            <strong>⚠️ Critical Condition:</strong> P must NOT contain ε (empty string)<br><br>
+            <strong>Why?</strong> If P contains ε, then:<br>
+            • P* = ε, making the solution trivial<br>
+            • The equation may not converge<br>
+            • Multiple solutions may exist<br>
+            • The iterative substitution method fails
+        </div>
+
+        <h3>Application Example</h3>
+        <div class="note">
+            <strong>Example:</strong> Solve R = a + Rb<br><br>
+            Here: Q = a, P = b (P doesn't contain ε ✓)<br><br>
+            Using Arden's Theorem:<br>
+            R = QP* = a(b)* = ab*<br><br>
+            This means R accepts: a, ab, abb, abbb, ...
+        </div>
+
+        <h3>Diagram: Iterative Substitution Process</h3>
+        <div class="diagram">
+            <svg width="600" height="400" viewBox="0 0 600 400">
+                <!-- Title -->
+                <text x="300" y="25" font-size="16" font-weight="bold" text-anchor="middle" fill="#2c3e50">
+                    Iterative Expansion of R = Q + RP
+                </text>
+                
+                <!-- Level 0 -->
+                <rect x="250" y="50" width="100" height="40" fill="#3498db" stroke="#2c3e50" stroke-width="2" rx="5"/>
+                <text x="300" y="75" font-size="14" font-weight="bold" fill="white" text-anchor="middle">R = Q + RP</text>
+                
+                <!-- Arrow down -->
+                <line x1="300" y1="90" x2="300" y2="120" stroke="#2c3e50" stroke-width="2" marker-end="url(#arrowhead)"/>
+                <text x="320" y="110" font-size="12" fill="#e74c3c" font-weight="bold">substitute R</text>
+                
+                <!-- Level 1 -->
+                <rect x="200" y="120" width="200" height="40" fill="#9b59b6" stroke="#2c3e50" stroke-width="2" rx="5"/>
+                <text x="300" y="145" font-size="13" font-weight="bold" fill="white" text-anchor="middle">R = Q + QP + RP²</text>
+                
+                <!-- Arrow down -->
+                <line x1="300" y1="160" x2="300" y2="190" stroke="#2c3e50" stroke-width="2" marker-end="url(#arrowhead)"/>
+                <text x="320" y="180" font-size="12" fill="#e74c3c" font-weight="bold">substitute R</text>
+                
+                <!-- Level 2 -->
+                <rect x="150" y="190" width="300" height="40" fill="#e67e22" stroke="#2c3e50" stroke-width="2" rx="5"/>
+                <text x="300" y="215" font-size="12" font-weight="bold" fill="white" text-anchor="middle">R = Q + QP + QP² + RP³</text>
+                
+                <!-- Arrow down -->
+                <line x1="300" y1="230" x2="300" y2="260" stroke="#2c3e50" stroke-width="2" marker-end="url(#arrowhead)"/>
+                <text x="230" y="250" font-size="12" fill="#e74c3c" font-weight="bold">continue...</text>
+                
+                <!-- Level n -->
+                <rect x="100" y="260" width="400" height="40" fill="#16a085" stroke="#2c3e50" stroke-width="2" rx="5"/>
+                <text x="300" y="285" font-size="12" font-weight="bold" fill="white" text-anchor="middle">R = Q + QP + QP² + ... + QP^n + RP^(n+1)</text>
+                
+                <!-- Arrow down -->
+                <line x1="300" y1="300" x2="300" y2="330" stroke="#2c3e50" stroke-width="2" marker-end="url(#arrowhead)"/>
+                <text x="190" y="320" font-size="12" fill="#e74c3c" font-weight="bold">n → ∞, RP^(n+1) → ∅</text>
+                
+                <!-- Final -->
+                <rect x="150" y="330" width="300" height="50" fill="#2ecc71" stroke="#2c3e50" stroke-width="3" rx="5"/>
+                <text x="300" y="350" font-size="14" font-weight="bold" fill="white" text-anchor="middle">R = Q(ε + P + P² + P³ + ...)</text>
+                <text x="300" y="370" font-size="16" font-weight="bold" fill="white" text-anchor="middle">R = QP*</text>
+            </svg>
+        </div>
+    </div>
+
+    <div style="text-align: center; padding: 30px; background: #ecf0f1; border-radius: 10px; margin-top: 30px;">
+        <h3 style="color: #2c3e50;">📚 Assignment Complete</h3>
+        <p style="color: #7f8c8d; font-size: 14px;">
+            All questions solved with detailed diagrams, transition tables, and proofs.<br>
+            RADHAKRISHNA INSTITUTE OF TECHNOLOGY AND ENGINEERING (RITE)
+        </p>
+    </div>
+
+</body>
+</html>

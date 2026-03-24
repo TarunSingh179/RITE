@@ -1,0 +1,276 @@
+{% extends "base.html" %}
+
+{% block title %}Library - College Management System{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h2 class="card-title">
+                                <i class="fas fa-book me-2"></i>College Library
+                            </h2>
+                            <p class="card-text">Browse our extensive collection of books and academic resources.</p>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <i class="fas fa-book-open" style="font-size: 4rem; opacity: 0.7;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search and Filters -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label for="searchInput" class="form-label">Search Books</label>
+                            <input type="text" class="form-control" id="searchInput" placeholder="Search by title, author, or ISBN">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="categoryFilter" class="form-label">Category</label>
+                            <select class="form-select" id="categoryFilter">
+                                <option value="">All Categories</option>
+                                <option value="Academic">Academic</option>
+                                <option value="Fiction">Fiction</option>
+                                <option value="Non-fiction">Non-fiction</option>
+                                <option value="Reference">Reference</option>
+                                <option value="Technical">Technical</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="availabilityFilter" class="form-label">Availability</label>
+                            <select class="form-select" id="availabilityFilter">
+                                <option value="">All Books</option>
+                                <option value="available">Available</option>
+                                <option value="unavailable">Unavailable</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">&nbsp;</label>
+                            <button class="btn btn-primary w-100" onclick="clearFilters()">
+                                <i class="fas fa-refresh me-1"></i>Clear
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Books Grid -->
+    <div class="row" id="booksGrid">
+        {% for book in books %}
+        <div class="col-md-6 col-lg-4 mb-4 book-item" 
+             data-title="{{ book.title.lower() }}" 
+             data-author="{{ book.author.lower() }}" 
+             data-category="{{ book.category }}"
+             data-available="{{ 'available' if book.available_copies > 0 else 'unavailable' }}">
+            <div class="card h-100 shadow-sm">
+                <div class="card-img-top bg-light text-center py-4">
+                    {% if book.cover_image %}
+                        <img src="{{ url_for('static', filename=book.cover_image) }}" 
+                             class="img-fluid" style="max-height: 200px;" alt="{{ book.title }}">
+                    {% else %}
+                        <i class="fas fa-book text-muted" style="font-size: 4rem;"></i>
+                    {% endif %}
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">{{ book.title }}</h5>
+                    <p class="card-text text-muted">By {{ book.author }}</p>
+                    
+                    <div class="mb-3">
+                        <span class="badge bg-primary me-1">{{ book.category }}</span>
+                        <span class="badge bg-{{ 'success' if book.available_copies > 0 else 'danger' }}">
+                            {{ 'Available' if book.available_copies > 0 else 'Unavailable' }}
+                        </span>
+                    </div>
+                    
+                    <div class="small text-muted mb-3">
+                        <div><strong>ISBN:</strong> {{ book.isbn }}</div>
+                        <div><strong>Publisher:</strong> {{ book.publisher }}</div>
+                        <div><strong>Year:</strong> {{ book.publication_year }}</div>
+                        <div><strong>Location:</strong> {{ book.location }}</div>
+                        <div><strong>Copies:</strong> {{ book.available_copies }}/{{ book.total_copies }} available</div>
+                    </div>
+                    
+                    {% if book.description %}
+                        <p class="card-text small">{{ book.description[:100] }}{% if book.description|length > 100 %}...{% endif %}</p>
+                    {% endif %}
+                </div>
+                <div class="card-footer bg-transparent">
+                    <div class="d-flex justify-content-between align-items-center">
+                        {% if current_user.is_authenticated and current_user.is_student() %}
+                            {% if book.available_copies > 0 %}
+                                <form method="POST" action="{{ url_for('issue_book', book_id=book.id) }}" class="d-inline">
+                                    <button type="submit" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-bookmark me-1"></i>Issue Book
+                                    </button>
+                                </form>
+                            {% else %}
+                                <button class="btn btn-secondary btn-sm" disabled>
+                                    <i class="fas fa-times me-1"></i>Not Available
+                                </button>
+                            {% endif %}
+                        {% elif not current_user.is_authenticated %}
+                            <a href="{{ url_for('login') }}" class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-sign-in-alt me-1"></i>Login to Issue
+                            </a>
+                        {% else %}
+                            <span class="text-muted small">Only students can issue books</span>
+                        {% endif %}
+                        
+                        <button type="button" class="btn btn-outline-info btn-sm" 
+                                data-bs-toggle="modal" data-bs-target="#bookModal{{ book.id }}">
+                            <i class="fas fa-info-circle me-1"></i>Details
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- No Results Message -->
+    <div id="noResults" class="text-center py-5" style="display: none;">
+        <i class="fas fa-search text-muted" style="font-size: 4rem;"></i>
+        <h4 class="text-muted mt-3">No books found</h4>
+        <p class="text-muted">Try adjusting your search criteria or filters.</p>
+    </div>
+</div>
+
+<!-- Book Detail Modals -->
+{% for book in books %}
+<div class="modal fade" id="bookModal{{ book.id }}" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Book Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        {% if book.cover_image %}
+                            <img src="{{ url_for('static', filename=book.cover_image) }}" 
+                                 class="img-fluid rounded" alt="{{ book.title }}">
+                        {% else %}
+                            <div class="bg-light text-center py-5 rounded">
+                                <i class="fas fa-book text-muted" style="font-size: 4rem;"></i>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-8">
+                        <h4>{{ book.title }}</h4>
+                        <p class="text-muted">By {{ book.author }}</p>
+                        
+                        <div class="mb-3">
+                            <span class="badge bg-primary me-1">{{ book.category }}</span>
+                            <span class="badge bg-{{ 'success' if book.available_copies > 0 else 'danger' }}">
+                                {{ 'Available' if book.available_copies > 0 else 'Unavailable' }}
+                            </span>
+                        </div>
+                        
+                        <table class="table table-sm">
+                            <tr><td><strong>ISBN:</strong></td><td>{{ book.isbn }}</td></tr>
+                            <tr><td><strong>Publisher:</strong></td><td>{{ book.publisher }}</td></tr>
+                            <tr><td><strong>Publication Year:</strong></td><td>{{ book.publication_year }}</td></tr>
+                            <tr><td><strong>Location:</strong></td><td>{{ book.location }}</td></tr>
+                            <tr><td><strong>Total Copies:</strong></td><td>{{ book.total_copies }}</td></tr>
+                            <tr><td><strong>Available Copies:</strong></td><td>{{ book.available_copies }}</td></tr>
+                        </table>
+                        
+                        {% if book.description %}
+                            <h6>Description</h6>
+                            <p class="text-muted">{{ book.description }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <a href="{{ url_for('book_barcode', book_id=book.id) }}" target="_blank" class="btn btn-outline-dark">
+                    <i class="fas fa-barcode me-1"></i>Barcode
+                </a>
+                <a href="{{ url_for('book_qrcode', book_id=book.id) }}" target="_blank" class="btn btn-outline-success">
+                    <i class="fas fa-qrcode me-1"></i>QR Code
+                </a>
+                {% if current_user.is_authenticated and book.available_copies > 0 %}
+                    <form method="POST" action="{{ url_for('reserve_book', book_id=book.id) }}" class="d-inline">
+                        <button type="submit" class="btn btn-warning">
+                            <i class="fas fa-calendar-plus me-1"></i>Reserve Book
+                        </button>
+                    </form>
+                {% endif %}
+                {% if current_user.is_authenticated and current_user.is_student() and book.available_copies > 0 %}
+                    <form method="POST" action="{{ url_for('issue_book', book_id=book.id) }}" class="d-inline">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-bookmark me-1"></i>Issue This Book
+                        </button>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+<script>
+// Search and filter functionality
+document.getElementById('searchInput').addEventListener('input', filterBooks);
+document.getElementById('categoryFilter').addEventListener('change', filterBooks);
+document.getElementById('availabilityFilter').addEventListener('change', filterBooks);
+
+function filterBooks() {
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    const categoryFilter = document.getElementById('categoryFilter').value;
+    const availabilityFilter = document.getElementById('availabilityFilter').value;
+    
+    const bookItems = document.querySelectorAll('.book-item');
+    let visibleCount = 0;
+    
+    bookItems.forEach(item => {
+        const title = item.dataset.title;
+        const author = item.dataset.author;
+        const category = item.dataset.category;
+        const available = item.dataset.available;
+        
+        const matchesSearch = !searchTerm || 
+                             title.includes(searchTerm) || 
+                             author.includes(searchTerm);
+        const matchesCategory = !categoryFilter || category === categoryFilter;
+        const matchesAvailability = !availabilityFilter || available === availabilityFilter;
+        
+        if (matchesSearch && matchesCategory && matchesAvailability) {
+            item.style.display = 'block';
+            visibleCount++;
+        } else {
+            item.style.display = 'none';
+        }
+    });
+    
+    // Show/hide no results message
+    const noResults = document.getElementById('noResults');
+    if (visibleCount === 0) {
+        noResults.style.display = 'block';
+    } else {
+        noResults.style.display = 'none';
+    }
+}
+
+function clearFilters() {
+    document.getElementById('searchInput').value = '';
+    document.getElementById('categoryFilter').value = '';
+    document.getElementById('availabilityFilter').value = '';
+    filterBooks();
+}
+</script>
+{% endblock %} 

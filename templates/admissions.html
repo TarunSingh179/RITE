@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}Admissions - RITE{% endblock %}
+
+{% block content %}
+<section class="py-5 fade-in-up">
+  <div class="container">
+    <div class="row align-items-center mb-4">
+      <div class="col-md-8">
+        <h1 class="display-5 fw-bold">Admissions</h1>
+        <p class="lead text-muted dark-mode-text">Join RITE and unlock opportunities in engineering and technology.</p>
+      </div>
+      <div class="col-md-4 text-md-end">
+        <a href="{{ url_for('contact') }}" class="btn btn-primary btn-lg ripple"><i class="fas fa-envelope-open-text me-2"></i>Enquire Now</a>
+      </div>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-lg-6">
+        <div class="card h-100">
+          <div class="card-body">
+            <h5 class="card-title">Eligibility</h5>
+            <ul class="mb-0">
+              <li>Undergraduate (B.Tech): 10+2 with Physics, Chemistry, Mathematics.</li>
+              <li>Postgraduate (M.Tech): Relevant UG degree in Engineering/Technology.</li>
+              <li>Diploma/Lateral Entry per state regulations.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="card h-100">
+          <div class="card-body">
+            <h5 class="card-title">How to Apply</h5>
+            <ol class="mb-0">
+              <li>Explore programs on the Courses page.</li>
+              <li>Fill the enquiry form on Contact page.</li>
+              <li>Our team will guide you through the next steps.</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="card h-100">
+          <div class="card-body">
+            <h6 class="text-uppercase text-muted">Important</h6>
+            <h5 class="card-title">Deadlines</h5>
+            <p class="mb-0">Admissions typically open in April–June. Check announcements on the Events page.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="card h-100">
+          <div class="card-body">
+            <h6 class="text-uppercase text-muted">Support</h6>
+            <h5 class="card-title">Financial Aid</h5>
+            <p class="mb-0">Scholarships and fee concessions available for eligible students.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="card h-100">
+          <div class="card-body">
+            <h6 class="text-uppercase text-muted">Contact</h6>
+            <h5 class="card-title">Admissions Desk</h5>
+            <p class="mb-2"><i class="fas fa-phone me-2"></i>+91 94370 12345</p>
+            <p class="mb-0"><i class="fas fa-envelope me-2"></i>admissions@rite.ac.in</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

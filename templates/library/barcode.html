@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block title %}Book Barcode - {{ book.title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">
+                        <i class="fas fa-barcode me-2"></i>Book Barcode
+                    </h4>
+                </div>
+                <div class="card-body text-center">
+                    <h5 class="card-title">{{ book.title }}</h5>
+                    <p class="card-text text-muted">by {{ book.author }}</p>
+                    
+                    <!-- Simple barcode representation -->
+                    <div class="barcode-container my-4">
+                        <div class="barcode" style="font-family: 'Courier New', monospace; font-size: 24px; letter-spacing: 2px; background: #fff; padding: 20px; border: 2px solid #000; display: inline-block;">
+                            {{ barcode_data }}
+                        </div>
+                    </div>
+                    
+                    <!-- Barcode visual representation -->
+                    <div class="barcode-visual my-4">
+                        <svg width="200" height="80" style="border: 1px solid #ccc;">
+                            <!-- Simple barcode pattern -->
+                            <rect x="10" y="10" width="2" height="60" fill="black"/>
+                            <rect x="15" y="10" width="1" height="60" fill="black"/>
+                            <rect x="20" y="10" width="3" height="60" fill="black"/>
+                            <rect x="25" y="10" width="1" height="60" fill="black"/>
+                            <rect x="30" y="10" width="2" height="60" fill="black"/>
+                            <rect x="35" y="10" width="1" height="60" fill="black"/>
+                            <rect x="40" y="10" width="2" height="60" fill="black"/>
+                            <rect x="45" y="10" width="3" height="60" fill="black"/>
+                            <rect x="50" y="10" width="1" height="60" fill="black"/>
+                            <rect x="55" y="10" width="2" height="60" fill="black"/>
+                            <rect x="60" y="10" width="1" height="60" fill="black"/>
+                            <rect x="65" y="10" width="3" height="60" fill="black"/>
+                            <rect x="70" y="10" width="2" height="60" fill="black"/>
+                            <rect x="75" y="10" width="1" height="60" fill="black"/>
+                            <rect x="80" y="10" width="2" height="60" fill="black"/>
+                            <rect x="85" y="10" width="3" height="60" fill="black"/>
+                            <rect x="90" y="10" width="1" height="60" fill="black"/>
+                            <rect x="95" y="10" width="2" height="60" fill="black"/>
+                            <rect x="100" y="10" width="1" height="60" fill="black"/>
+                            <rect x="105" y="10" width="3" height="60" fill="black"/>
+                            <rect x="110" y="10" width="2" height="60" fill="black"/>
+                            <rect x="115" y="10" width="1" height="60" fill="black"/>
+                            <rect x="120" y="10" width="2" height="60" fill="black"/>
+                            <rect x="125" y="10" width="3" height="60" fill="black"/>
+                            <rect x="130" y="10" width="1" height="60" fill="black"/>
+                            <rect x="135" y="10" width="2" height="60" fill="black"/>
+                            <rect x="140" y="10" width="1" height="60" fill="black"/>
+                            <rect x="145" y="10" width="3" height="60" fill="black"/>
+                            <rect x="150" y="10" width="2" height="60" fill="black"/>
+                            <rect x="155" y="10" width="1" height="60" fill="black"/>
+                            <rect x="160" y="10" width="2" height="60" fill="black"/>
+                            <rect x="165" y="10" width="3" height="60" fill="black"/>
+                            <rect x="170" y="10" width="1" height="60" fill="black"/>
+                            <rect x="175" y="10" width="2" height="60" fill="black"/>
+                            <rect x="180" y="10" width="1" height="60" fill="black"/>
+                            <rect x="185" y="10" width="3" height="60" fill="black"/>
+                        </svg>
+                    </div>
+                    
+                    <div class="book-details mt-4">
+                        <table class="table table-borderless">
+                            <tr><td><strong>Book ID:</strong></td><td>{{ book.id }}</td></tr>
+                            <tr><td><strong>ISBN:</strong></td><td>{{ book.isbn or 'N/A' }}</td></tr>
+                            <tr><td><strong>Category:</strong></td><td>{{ book.category }}</td></tr>
+                            <tr><td><strong>Available Copies:</strong></td><td>{{ book.available_copies }}</td></tr>
+                        </table>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <button onclick="window.print()" class="btn btn-primary me-2">
+                            <i class="fas fa-print me-1"></i>Print Barcode
+                        </button>
+                        <a href="{{ url_for('library') }}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-1"></i>Back to Library
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+@media print {
+    .btn, .card-header, nav, footer {
+        display: none !important;
+    }
+    .card {
+        border: none !important;
+        box-shadow: none !important;
+    }
+}
+</style>
+{% endblock %}

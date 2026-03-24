@@ -1,0 +1,289 @@
+{% extends "base.html" %}
+
+{% block title %}Faculty Dashboard - College Management System{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+            <div class="position-sticky pt-3">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('faculty_dashboard') }}">
+                            <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('faculty_assignments') }}">
+                            <i class="fas fa-tasks me-2"></i>Assignments
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('create_assignment') }}">
+                            <i class="fas fa-plus me-2"></i>Create Assignment
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('faculty_attendance') }}">
+                            <i class="fas fa-user-check me-2"></i>Attendance
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('faculty_attendance_report') }}">
+                            <i class="fas fa-chart-bar me-2"></i>Attendance Report
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('courses') }}">
+                            <i class="fas fa-graduation-cap me-2"></i>Courses
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Main content -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">Faculty Dashboard</h1>
+                <div class="btn-toolbar mb-2 mb-md-0">
+                    <div class="btn-group me-2">
+                        <a href="{{ url_for('create_assignment') }}" class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-plus me-1"></i>New Assignment
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Welcome Section -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card bg-primary text-white">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col-md-8">
+                                    <h4 class="card-title">Welcome, {{ current_user.get_full_name() }}!</h4>
+                                    <p class="card-text">Manage your subjects, create assignments, and track student progress.</p>
+                                </div>
+                                <div class="col-md-4 text-end">
+                                    <i class="fas fa-chalkboard-teacher" style="font-size: 4rem; opacity: 0.7;"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistics Cards -->
+            <div class="row mb-4">
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-primary shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                        Subjects Teaching</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{ subjects|length }}</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-book fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-success shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                        Total Assignments</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{ assignments|length }}</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-tasks fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-info shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                        Active Assignments</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                        {{ assignments|selectattr('is_active', 'equalto', true)|list|length }}
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-clipboard-check fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-warning shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                        Department</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{ current_user.department or 'Not Set' }}</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-building fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Subjects Section -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card shadow">
+                        <div class="card-header">
+                            <h5 class="mb-0">My Subjects</h5>
+                        </div>
+                        <div class="card-body">
+                            {% if subjects %}
+                            <div class="row">
+                                {% for subject in subjects %}
+                                <div class="col-md-6 col-lg-4 mb-3">
+                                    <div class="card h-100">
+                                        <div class="card-body">
+                                            <h6 class="card-title">{{ subject.name }}</h6>
+                                            <p class="card-text text-muted">{{ subject.description[:100] }}{% if subject.description|length > 100 %}...{% endif %}</p>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <span class="badge bg-primary">{{ subject.code }}</span>
+                                                <span class="badge bg-secondary">{{ subject.credits }} Credits</span>
+                                            </div>
+                                            <div class="mt-2">
+                                                <small class="text-muted">
+                                                    <i class="fas fa-graduation-cap me-1"></i>
+                                                    {{ subject.semester.name }}
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% else %}
+                            <div class="text-center py-4">
+                                <i class="fas fa-book text-muted" style="font-size: 3rem;"></i>
+                                <p class="text-muted mt-2">No subjects assigned yet.</p>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Assignments -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card shadow">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Recent Assignments</h5>
+                            <a href="{{ url_for('faculty_assignments') }}" class="btn btn-sm btn-outline-primary">View All</a>
+                        </div>
+                        <div class="card-body">
+                            {% if assignments %}
+                            <div class="mb-3">
+                                <input class="search-input form-control" data-target="#assignmentsTable" placeholder="Search assignments...">
+                            </div>
+                            <div class="table-responsive">
+                                <table id="assignmentsTable" class="table table-hover paginated-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Title</th>
+                                            <th>Subject</th>
+                                            <th>Due Date</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for assignment in assignments %}
+                                        <tr>
+                                            <td>{{ assignment.title }}</td>
+                                            <td>{{ assignment.subject.name }}</td>
+                                            <td>
+                                                <span class="{% if assignment.due_date < now %}text-danger{% endif %}">
+                                                    {{ assignment.due_date.strftime('%Y-%m-%d %H:%M') }}
+                                                </span>
+                                                {% if assignment.due_date < now %}
+                                                    <br><small class="text-danger">Overdue</small>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% if assignment.is_active %}
+                                                    <span class="badge bg-success">Active</span>
+                                                {% else %}
+                                                    <span class="badge bg-secondary">Inactive</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <div class="btn-group" role="group">
+                                                    <button type="button" class="btn btn-sm btn-outline-primary">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+                                                    <button type="button" class="btn btn-sm btn-outline-warning">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            {% else %}
+                            <div class="text-center py-4">
+                                <i class="fas fa-tasks text-muted" style="font-size: 3rem;"></i>
+                                <p class="text-muted mt-2">No assignments created yet.</p>
+                                <a href="{{ url_for('create_assignment') }}" class="btn btn-primary">
+                                    <i class="fas fa-plus me-2"></i>Create First Assignment
+                                </a>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<style>
+.border-left-primary {
+    border-left: 0.25rem solid #4e73df !important;
+}
+.border-left-success {
+    border-left: 0.25rem solid #1cc88a !important;
+}
+.border-left-info {
+    border-left: 0.25rem solid #36b9cc !important;
+}
+.border-left-warning {
+    border-left: 0.25rem solid #f6c23e !important;
+}
+.text-gray-800 {
+    color: #5a5c69 !important;
+}
+.text-gray-300 {
+    color: #dddfeb !important;
+}
+</style>
+{% endblock %} 

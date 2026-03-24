@@ -1,0 +1,16 @@
+<!doctype html>
+<html>
+  <body style="font-family: Arial, sans-serif; color:#222">
+    <h2>Payment Confirmation</h2>
+    <p>Dear {{ student.get_full_name() }},</p>
+    <p>We have received your payment.</p>
+    <ul>
+      <li>Fee Type: <strong>{{ fee.fee_type }}</strong></li>
+      <li>Amount: <strong>{{ '%.2f'|format(payment.amount or 0) }}</strong></li>
+      <li>Receipt No: <strong>{{ payment.receipt_number }}</strong></li>
+      <li>Transaction ID: <strong>{{ payment.txn_id }}</strong></li>
+      <li>Paid At: <strong>{{ (payment.paid_at or fee.paid_date) }}</strong></li>
+    </ul>
+    <p>Thank you.</p>
+  </body>
+</html>
